@@ -143,6 +143,23 @@ func main() {
 				},
 			},
 			{
+				Name:    "create",
+				Aliases: []string{"c"},
+				Usage:   "create",
+				Action: func(cCtx *cli.Context) error {
+					name := cCtx.Args().First()
+					if name == "" {
+						fmt.Println("Usage: bima create <name>")
+
+						return nil
+					}
+
+					fmt.Println("Creating new bima skeleton...")
+
+					return create(name)
+				},
+			},
+			{
 				Name:    "dump",
 				Aliases: []string{"d"},
 				Usage:   "dump",
@@ -215,6 +232,24 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
+}
+func create(name string) error {
+	_, err := exec.Command("git", "clone", "--depth 1", "https://github.com/bimalabs/skeleton.git", name).Output()
+	if err != nil {
+		return err
+	}
+
+	_, err = exec.Command("cd", name).Output()
+	if err != nil {
+		return err
+	}
+
+	_, err = exec.Command("rm -rf", ".git").Output()
+	if err != nil {
+		return err
+	}
+
+	return err
 }
 
 func dump() error {
