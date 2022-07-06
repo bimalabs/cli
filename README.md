@@ -2,11 +2,11 @@
 
 ## Install
 
-- `git clone github.com/bimalabs/cli.git`
+- Download latest release from `https://github.com/bimalabs/cli/tags`
 
-- `cd cli && go build -o bima`
+- Extract and build using `go build -o bima`
 
-- `sudo mv bima /usr/local/bin/bima`
+- Move to your bin folder `sudo mv bima /usr/local/bin/bima`
 
 ## Usage
 
