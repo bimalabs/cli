@@ -10,15 +10,21 @@
 
 ## Usage
 
-- `bima dump` to generate dic codes
+- `bima create app <name>` to create new application
 
 - `bima module add <name>` to add new module
 
 - `bima module remove <name>` to remove module
 
+- `bima dump` to generate dic codes
+
 - `bima update` to update framework and dependencies
 
 - `bima clean` to cleaning dependencies
+
+- `bima generate` to generating code from protobuff
+
+- `bima run` to running application
 
 - `bima version` to show framework and cli version
 

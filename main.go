@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/url"
@@ -40,9 +41,43 @@ func main() {
 		Usage: "Bima Framework Toolkit",
 		Commands: []*cli.Command{
 			{
+				Name:    "create",
+				Aliases: []string{"new", "c", "n"},
+				Usage:   "bima create <command>",
+				Subcommands: []*cli.Command{
+					{
+						Name:    "app",
+						Aliases: []string{"project", "skeleton"},
+						Usage:   "bima create app <name>",
+						Action: func(cCtx *cli.Context) error {
+							name := cCtx.Args().First()
+							if name == "" {
+								fmt.Println("Usage: bima create app <name>")
+
+								return nil
+							}
+
+							fmt.Println("Creating new application...")
+
+							err := create(name)
+							if err == nil {
+								util := color.New(color.Bold)
+
+								fmt.Print("Move to ")
+								util.Print(name)
+								fmt.Println(" folder and type ")
+								util.Println("bima run")
+							}
+
+							return err
+						},
+					},
+				},
+			},
+			{
 				Name:    "module",
 				Aliases: []string{"m"},
-				Usage:   "module",
+				Usage:   "module <command>",
 				Subcommands: []*cli.Command{
 					{
 						Name: "add",
@@ -87,26 +122,30 @@ func main() {
 
 							util := color.New(color.FgCyan, color.Bold)
 
-							register(generator, util, module)
-
-							if err := genproto(); err != nil {
-								color.New(color.FgRed).Println("Error generate code from proto files")
-								os.Exit(1)
+							err = register(generator, util, module)
+							if err != nil {
+								color.New(color.FgRed).Println(err)
 							}
 
-							if err := clean(); err != nil {
+							if err = genproto(); err != nil {
+								color.New(color.FgRed).Println("Error generate code from proto files")
+
+								return err
+							}
+
+							if err = clean(); err != nil {
 								color.New(color.FgRed).Println("Error cleaning dependencies")
 
 								return err
 							}
 
-							if err := dump(); err != nil {
+							if err = dump(); err != nil {
 								color.New(color.FgRed).Println("Error update DI container")
 
 								return err
 							}
 
-							if err := clean(); err != nil {
+							if err = clean(); err != nil {
 								color.New(color.FgRed).Println("Error cleaning dependencies")
 
 								return err
@@ -159,23 +198,6 @@ func main() {
 							return nil
 						},
 					},
-				},
-			},
-			{
-				Name:    "create",
-				Aliases: []string{"c"},
-				Usage:   "create",
-				Action: func(cCtx *cli.Context) error {
-					name := cCtx.Args().First()
-					if name == "" {
-						fmt.Println("Usage: bima create <name>")
-
-						return nil
-					}
-
-					fmt.Println("Creating new bima skeleton...")
-
-					return create(name)
 				},
 			},
 			{
@@ -233,9 +255,9 @@ func main() {
 			{
 				Name:    "generate",
 				Aliases: []string{"gen", "genproto", "g"},
-				Usage:   "clean",
+				Usage:   "generate",
 				Action: func(*cli.Context) error {
-					fmt.Println("Generating protobuff")
+					fmt.Println("Generating protobuff...")
 					if err := genproto(); err != nil {
 						color.New(color.FgRed).Println("Error generate protobuff")
 
@@ -317,18 +339,48 @@ func main() {
 	}
 }
 func create(name string) error {
-	_, err := exec.Command("git", "clone", "--depth 1", "https://github.com/bimalabs/skeleton.git", name).Output()
+	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/skeleton.git", name).CombinedOutput()
 	if err != nil {
+		fmt.Println(string(output))
+
 		return err
 	}
 
-	_, err = exec.Command("cd", name).Output()
+	output, err = exec.Command("rm", "-rf", fmt.Sprintf("%s/.git", name)).CombinedOutput()
 	if err != nil {
+		fmt.Println(string(output))
+
 		return err
 	}
 
-	_, err = exec.Command("rm -rf", ".git").Output()
+	output, err = exec.Command("cp", fmt.Sprintf("%s/.example.env", name), fmt.Sprintf("%s/.env", name)).CombinedOutput()
 	if err != nil {
+		fmt.Println(string(output))
+
+		return err
+	}
+
+	wd, _ := os.Getwd()
+
+	cmd := exec.Command("go", "get")
+	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
+	output, _ = cmd.CombinedOutput()
+
+	cmd = exec.Command("go", "run", "dumper/main.go")
+	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
+	output, err = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(output))
+
+		return err
+	}
+
+	cmd = exec.Command("go", "get")
+	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
+	output, _ = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(output))
+
 		return err
 	}
 
@@ -446,7 +498,7 @@ func parse(config *configs.Env) {
 	config.CacheLifetime, _ = strconv.Atoi(os.Getenv("CACHE_LIFETIME"))
 }
 
-func register(generator *generators.Factory, util *color.Color, name string) {
+func register(generator *generators.Factory, util *color.Color, name string) error {
 	module := generators.ModuleTemplate{}
 	field := generators.FieldTemplate{}
 	mapType := utils.NewType()
@@ -459,8 +511,7 @@ func register(generator *generators.Factory, util *color.Color, name string) {
 	for more {
 		err := interact.NewInteraction("Add new column?").Resolve(&more)
 		if err != nil {
-			util.Println(err.Error())
-			os.Exit(1)
+			return err
 		}
 
 		if more {
@@ -484,14 +535,17 @@ func register(generator *generators.Factory, util *color.Color, name string) {
 	}
 
 	if len(module.Fields) < 1 {
-		util.Println("You must have at least one column in table")
-		os.Exit(1)
+		return errors.New("You must have at least one column in table")
 	}
 
 	generator.Generate(module)
 
 	workDir, _ := os.Getwd()
-	util.Printf("Module registered in %s/modules.yaml\n", workDir)
+	fmt.Print("Module ")
+	util.Print(name)
+	fmt.Printf(" registered in %s/modules.yaml\n", workDir)
+
+	return nil
 }
 
 func unregister(util *color.Color, module string) {
@@ -566,14 +620,16 @@ func unregister(util *color.Color, module string) {
 	os.Remove(fmt.Sprintf("%s/protos/builds/%s.pb.gw.go", workDir, moduleUnderscore))
 	os.Remove(fmt.Sprintf("%s/swaggers/%s.swagger.json", workDir, moduleUnderscore))
 
-	util.Println("Module deleted")
+	fmt.Print("Module ")
+	util.Print(module)
+	util.Println(" deleted")
 }
 
 func column(util *color.Color, field *generators.FieldTemplate, mapType utils.Type) {
 	err := interact.NewInteraction("Input column name?").Resolve(&field.Name)
 	if err != nil {
 		util.Println(err.Error())
-		os.Exit(1)
+		column(util, field, mapType)
 	}
 
 	if field.Name == "" {
@@ -583,10 +639,13 @@ func column(util *color.Color, field *generators.FieldTemplate, mapType utils.Ty
 
 	field.ProtobufType = "string"
 	err = interact.NewInteraction("Input data type?",
-		interact.Choice{Display: "double", Value: "double"},
-		interact.Choice{Display: "float", Value: "float"},
+		interact.Choice{Display: "string", Value: "string"},
+		interact.Choice{Display: "bool", Value: "bool"},
 		interact.Choice{Display: "int32", Value: "int32"},
 		interact.Choice{Display: "int64", Value: "int64"},
+		interact.Choice{Display: "bytes", Value: "bytes"},
+		interact.Choice{Display: "double", Value: "double"},
+		interact.Choice{Display: "float", Value: "float"},
 		interact.Choice{Display: "uint32", Value: "uint32"},
 		interact.Choice{Display: "sint32", Value: "sint32"},
 		interact.Choice{Display: "sint64", Value: "sint64"},
@@ -594,13 +653,10 @@ func column(util *color.Color, field *generators.FieldTemplate, mapType utils.Ty
 		interact.Choice{Display: "fixed64", Value: "fixed64"},
 		interact.Choice{Display: "sfixed32", Value: "sfixed32"},
 		interact.Choice{Display: "sfixed64", Value: "sfixed64"},
-		interact.Choice{Display: "bool", Value: "bool"},
-		interact.Choice{Display: "string", Value: "string"},
-		interact.Choice{Display: "bytes", Value: "bytes"},
 	).Resolve(&field.ProtobufType)
 	if err != nil {
 		util.Println(err.Error())
-		os.Exit(1)
+		column(util, field, mapType)
 	}
 
 	field.GolangType = mapType.Value(field.ProtobufType)
@@ -608,6 +664,6 @@ func column(util *color.Color, field *generators.FieldTemplate, mapType utils.Ty
 	err = interact.NewInteraction("Is column required?").Resolve(&field.IsRequired)
 	if err != nil {
 		util.Println(err.Error())
-		os.Exit(1)
+		column(util, field, mapType)
 	}
 }
