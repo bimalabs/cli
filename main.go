@@ -326,7 +326,7 @@ func main() {
 					}
 
 					fmt.Printf("Framework: %s\n", version)
-					fmt.Println("Cli: v1.0.2")
+					fmt.Println("Cli: v1.0.3")
 
 					return nil
 				},
