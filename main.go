@@ -278,7 +278,32 @@ func main() {
 				Aliases: []string{"v"},
 				Usage:   "version",
 				Action: func(*cli.Context) error {
-					fmt.Printf("Framework: %s\n", bima.Version)
+					wd, _ := os.Getwd()
+					var path strings.Builder
+
+					path.WriteString(wd)
+					path.WriteString("/go.mod")
+
+					mod, err := os.ReadFile(path.String())
+					if err != nil {
+						return err
+					}
+
+					f, err := modfile.Parse(path.String(), mod, nil)
+					if err != nil {
+						return err
+					}
+
+					version := "unknown"
+					for _, v := range f.Require {
+						if v.Mod.Path == "github.com/bimalabs/framework/v4" {
+							version = v.Mod.Version
+
+							break
+						}
+					}
+
+					fmt.Printf("Framework: %s\n", version)
 					fmt.Println("Cli: v1.0.1")
 
 					return nil

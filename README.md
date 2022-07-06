@@ -29,5 +29,3 @@
 - Direct output from skeleton (show)
 
 - Upgrade `bima` version
-
-- Show framework version from skeleton
