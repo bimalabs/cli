@@ -16,4 +16,8 @@
 
 - `bima module remove <name>` to remove module
 
+- `bima update` to update framework and dependencies
+
+- `bima clean` to cleaning dependencies
+
 - `bima version` to show framework and cli version
