@@ -21,3 +21,13 @@
 - `bima clean` to cleaning dependencies
 
 - `bima version` to show framework and cli version
+
+## TODO
+
+- Add command to generate `middleware`, `route`, `pagination adapter` and `driver`
+
+- Direct output from skeleton (show)
+
+- Upgrade `bima` version
+
+- Show framework version from skeleton

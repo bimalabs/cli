@@ -3,7 +3,7 @@ module github.com/bimalabs/cli
 go 1.16
 
 require (
-	github.com/bimalabs/framework/v4 v4.0.5
+	github.com/bimalabs/framework/v4 v4.0.6
 	github.com/fatih/color v1.13.0
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/goccy/go-json v0.9.8 // indirect
@@ -18,6 +18,9 @@ require (
 )
 
 require (
+	github.com/creack/pty v1.1.17 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/urfave/cli/v2 v2.10.3
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/tools v0.1.11 // indirect

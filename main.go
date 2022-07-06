@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
@@ -63,6 +64,12 @@ func main() {
 								return nil
 							}
 
+							if err := dump(); err != nil {
+								color.New(color.FgRed).Println("Error update DI container")
+
+								return err
+							}
+
 							config := configs.Env{}
 							env(&config, file, filepath.Ext(file))
 
@@ -88,13 +95,19 @@ func main() {
 							}
 
 							if err := clean(); err != nil {
-								color.New(color.FgRed).Println("Error update dependencies")
+								color.New(color.FgRed).Println("Error cleaning dependencies")
 
 								return err
 							}
 
 							if err := dump(); err != nil {
 								color.New(color.FgRed).Println("Error update DI container")
+
+								return err
+							}
+
+							if err := clean(); err != nil {
+								color.New(color.FgRed).Println("Error cleaning dependencies")
 
 								return err
 							}
@@ -118,6 +131,12 @@ func main() {
 								return nil
 							}
 
+							if err := dump(); err != nil {
+								color.New(color.FgRed).Println("Error cleaning DI container")
+
+								return err
+							}
+
 							util := color.New(color.FgCyan, color.Bold)
 
 							unregister(util, module)
@@ -128,7 +147,7 @@ func main() {
 							}
 
 							if err := clean(); err != nil {
-								color.New(color.FgRed).Println("Error update dependencies")
+								color.New(color.FgRed).Println("Error cleaning dependencies")
 
 								return err
 							}
@@ -175,8 +194,19 @@ func main() {
 				Usage:   "update",
 				Action: func(*cli.Context) error {
 					fmt.Println("Updating dependencies...")
+					if err := update(); err != nil {
+						color.New(color.FgRed).Println("Error update dependencies")
 
-					return update()
+						return err
+					}
+
+					if err := dump(); err != nil {
+						color.New(color.FgRed).Println("Error update DI container")
+
+						return err
+					}
+
+					return nil
 				},
 			},
 			{
@@ -185,8 +215,19 @@ func main() {
 				Usage:   "clean",
 				Action: func(*cli.Context) error {
 					fmt.Println("Cleaning dependencies...")
+					if err := clean(); err != nil {
+						color.New(color.FgRed).Println("Error cleaning dependencies")
 
-					return clean()
+						return err
+					}
+
+					if err := dump(); err != nil {
+						color.New(color.FgRed).Println("Error update DI container")
+
+						return err
+					}
+
+					return nil
 				},
 			},
 			{
@@ -195,8 +236,25 @@ func main() {
 				Usage:   "clean",
 				Action: func(*cli.Context) error {
 					fmt.Println("Generating protobuff")
+					if err := genproto(); err != nil {
+						color.New(color.FgRed).Println("Error generate protobuff")
 
-					return clean()
+						return err
+					}
+
+					if err := clean(); err != nil {
+						color.New(color.FgRed).Println("Error cleaning dependencies")
+
+						return err
+					}
+
+					if err := dump(); err != nil {
+						color.New(color.FgRed).Println("Error update DI container")
+
+						return err
+					}
+
+					return nil
 				},
 			},
 			{
@@ -271,9 +329,30 @@ func update() error {
 }
 
 func run(file string) error {
-	_, err := exec.Command("go", "run", "cmd/main.go", file).Output()
+	cmd := exec.Command("go", "run", "cmd/main.go", file)
+	cmdReader, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
 
-	return err
+	scanner := bufio.NewScanner(cmdReader)
+	go func() {
+		for scanner.Scan() {
+			fmt.Printf("%s\n", scanner.Text())
+		}
+	}()
+
+	err = cmd.Start()
+	if err != nil {
+		return err
+	}
+
+	err = cmd.Wait()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func genproto() error {
@@ -387,7 +466,7 @@ func register(generator *generators.Factory, util *color.Color, name string) {
 	generator.Generate(module)
 
 	workDir, _ := os.Getwd()
-	util.Println(fmt.Sprintf("Module registered in %s/modules.yaml", workDir))
+	util.Printf("Module registered in %s/modules.yaml\n", workDir)
 }
 
 func unregister(util *color.Color, module string) {
