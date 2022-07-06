@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/url"
@@ -36,13 +35,13 @@ import (
 func main() {
 	var file string
 	app := &cli.App{
-		Name:  "bima",
+		Name:  "Bima Cli",
 		Usage: "Bima Framework Toolkit",
 		Commands: []*cli.Command{
 			{
 				Name:    "module",
 				Aliases: []string{"m"},
-				Usage:   "Add or remove module",
+				Usage:   "module",
 				Subcommands: []*cli.Command{
 					{
 						Name: "add",
@@ -55,8 +54,15 @@ func main() {
 							},
 						},
 						Aliases: []string{"a"},
-						Usage:   "add new module",
+						Usage:   "module add <name>",
 						Action: func(cCtx *cli.Context) error {
+							module := cCtx.Args().First()
+							if module == "" {
+								fmt.Println("Usage: bima module add <name>")
+
+								return nil
+							}
+
 							config := configs.Env{}
 							env(&config, file, filepath.Ext(file))
 
@@ -66,41 +72,34 @@ func main() {
 							}
 
 							generator := container.GetBimaModuleGenerator()
-							util := color.New(color.FgCyan, color.Bold)
-
+							generator.Driver = config.Db.Driver
+							generator.ApiVersion = "v1"
 							if cCtx.NArg() > 1 {
 								generator.ApiVersion = cCtx.Args().Get(1)
 							}
 
-							if generator.ApiVersion == "" {
-								generator.ApiVersion = "v1"
-							}
+							util := color.New(color.FgCyan, color.Bold)
 
-							generator.Driver = config.Db.Driver
-
-							if cCtx.Args().First() == "" {
-								return errors.New("module name can not blank")
-							}
-
-							register(generator, util, cCtx.Args().First())
+							register(generator, util, module)
 
 							if err := genproto(); err != nil {
-								util.Println("Error generate code from proto files")
+								color.New(color.FgRed).Println("Error generate code from proto files")
 								os.Exit(1)
 							}
 
 							if err := clean(); err != nil {
-								util.Println("Error update dependencies")
+								color.New(color.FgRed).Println("Error update dependencies")
 
 								return err
 							}
 
 							if err := dump(); err != nil {
-								util.Println("Error update DI container")
+								color.New(color.FgRed).Println("Error update DI container")
 
 								return err
 							}
 
+							util = color.New(color.FgGreen)
 							util.Print("By: ")
 							util.Println("Bimalabs")
 
@@ -110,23 +109,31 @@ func main() {
 					{
 						Name:    "remove",
 						Aliases: []string{"r"},
-						Usage:   "remove module",
+						Usage:   "module remove <name>",
 						Action: func(cCtx *cli.Context) error {
+							module := cCtx.Args().First()
+							if module == "" {
+								fmt.Println("Usage: bima module add <name>")
+
+								return nil
+							}
+
 							util := color.New(color.FgCyan, color.Bold)
 
-							unregister(util, cCtx.Args().First())
+							unregister(util, module)
 							if err := dump(); err != nil {
-								util.Println("Error update DI container")
+								color.New(color.FgRed).Println("Error update DI container")
 
 								return err
 							}
 
 							if err := clean(); err != nil {
-								util.Println("Error update dependencies")
+								color.New(color.FgRed).Println("Error update dependencies")
 
 								return err
 							}
 
+							util = color.New(color.FgGreen)
 							util.Print("By: ")
 							util.Println("Bimalabs")
 
@@ -138,9 +145,20 @@ func main() {
 			{
 				Name:    "dump",
 				Aliases: []string{"d"},
-				Usage:   "Dump container",
+				Usage:   "dump",
 				Action: func(*cli.Context) error {
 					return dump()
+				},
+			},
+			{
+				Name:    "version",
+				Aliases: []string{"v"},
+				Usage:   "version",
+				Action: func(*cli.Context) error {
+					fmt.Printf("Framework: %s\n", bima.Version)
+					fmt.Println("Cli: v1.0.0")
+
+					return nil
 				},
 			},
 		},

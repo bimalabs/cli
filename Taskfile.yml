@@ -21,3 +21,4 @@ tasks:
     update:
         cmds:
             - go get -u
+    
