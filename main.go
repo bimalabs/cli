@@ -147,7 +147,55 @@ func main() {
 				Aliases: []string{"d"},
 				Usage:   "dump",
 				Action: func(*cli.Context) error {
+					fmt.Println("Generate dic codes...")
+
 					return dump()
+				},
+			},
+			{
+				Name:    "update",
+				Aliases: []string{"u"},
+				Usage:   "update",
+				Action: func(*cli.Context) error {
+					fmt.Println("Updating dependencies...")
+
+					return update()
+				},
+			},
+			{
+				Name:    "clean",
+				Aliases: []string{"c"},
+				Usage:   "clean",
+				Action: func(*cli.Context) error {
+					fmt.Println("Cleaning dependencies...")
+
+					return clean()
+				},
+			},
+			{
+				Name:    "generate",
+				Aliases: []string{"gen", "genproto", "g"},
+				Usage:   "clean",
+				Action: func(*cli.Context) error {
+					fmt.Println("Generating protobuff")
+
+					return clean()
+				},
+			},
+			{
+				Name: "run",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:        "file",
+						Value:       ".env",
+						Usage:       "Config file",
+						Destination: &file,
+					},
+				},
+				Aliases: []string{"r"},
+				Usage:   "run",
+				Action: func(*cli.Context) error {
+					return run(file)
 				},
 			},
 			{
@@ -156,7 +204,7 @@ func main() {
 				Usage:   "version",
 				Action: func(*cli.Context) error {
 					fmt.Printf("Framework: %s\n", bima.Version)
-					fmt.Println("Cli: v1.0.0")
+					fmt.Println("Cli: v1.0.1")
 
 					return nil
 				},
@@ -177,6 +225,18 @@ func dump() error {
 
 func clean() error {
 	_, err := exec.Command("go", "mod", "tidy").Output()
+
+	return err
+}
+
+func update() error {
+	_, err := exec.Command("go", "get", "-u").Output()
+
+	return err
+}
+
+func run(file string) error {
+	_, err := exec.Command("go", "run", "cmd/main.go", file).Output()
 
 	return err
 }
