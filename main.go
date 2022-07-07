@@ -35,8 +35,101 @@ import (
 )
 
 var (
-	Version = "v1.0.9"
-	Next    = "v1.0.10"
+	Version = "v1.0.10"
+	Next    = "v1.0.11"
+
+	Adapter = `package adapters
+
+import (
+    "context"
+
+    "github.com/bimalabs/framework/v4/paginations"
+    "github.com/vcraescu/go-paginator/v2"
+)
+
+type %s struct {
+}
+
+func (a *%s) CreateAdapter(ctx context.Context, paginator paginations.Pagination) paginator.Adapter {
+    // TODO
+
+    return nil
+}
+
+`
+
+	Driver = `package drivers
+
+import (
+    "gorm.io/gorm"
+)
+
+type %s struct {
+}
+
+func (_ %s) Connect(host string, port int, user string, password string, dbname string, debug bool) *gorm.DB {
+    // TODO
+
+    return nil
+}
+
+`
+
+	Route = `package routes
+
+import (
+    "net/http"
+    "strings"
+
+    "github.com/bimalabs/framework/v4/middlewares"
+    "google.golang.org/grpc"
+)
+
+type %s struct {
+}
+
+func (r *%s) Path() string {
+    return /%s
+}
+
+func (r *%s) Method() string {
+    return http.MethodGet
+}
+
+func (r *%s) SetClient(client *grpc.ClientConn) {
+    // TODO
+}
+
+func (r *%s) Middlewares() []middlewares.Middleware {
+    // TODO
+
+    return nil
+}
+
+func (r *%s) Handle(response http.ResponseWriter, request *http.Request, params map[string]string) {
+    // TODO
+}
+`
+
+	Middleware = `package middlewares
+
+import (
+    "net/http"
+)
+
+type %s struct {
+}
+
+func (m *%s) Attach(request *http.Request, response http.ResponseWriter) bool {
+    // TODO
+
+    return false
+}
+
+func (m *%s) Priority() int {
+    return 0
+}
+`
 )
 
 func main() {
@@ -75,6 +168,163 @@ func main() {
 							}
 
 							return err
+						},
+					},
+					{
+						Name:    "middleware",
+						Aliases: []string{"mdl", "mid"},
+						Usage:   "bima create middleware <name>",
+						Action: func(cCtx *cli.Context) error {
+							name := cCtx.Args().First()
+							if name == "" {
+								fmt.Println("Usage: bima create middleware <name>")
+
+								return nil
+							}
+
+							fmt.Println("Creating middleware...")
+
+							wd, err := os.Getwd()
+							if err != nil {
+								return err
+							}
+
+							err = os.MkdirAll(fmt.Sprintf("%s/middlewares", wd), 0755)
+							if err != nil {
+								return err
+							}
+
+							f, err := os.Create(fmt.Sprintf("%s/middlewares/%s.go", wd, strings.ToLower(name)))
+							if err != nil {
+								return err
+							}
+
+							name = strings.ToTitle(name)
+							_, err = f.WriteString(fmt.Sprintf(Middleware, name, name, name))
+							if err != nil {
+								return err
+							}
+
+							f.Sync()
+
+							return f.Close()
+						},
+					},
+					{
+						Name:  "driver",
+						Usage: "bima create driver <name>",
+						Action: func(cCtx *cli.Context) error {
+							name := cCtx.Args().First()
+							if name == "" {
+								fmt.Println("Usage: bima create driver <name>")
+
+								return nil
+							}
+
+							fmt.Println("Creating database driver...")
+
+							wd, err := os.Getwd()
+							if err != nil {
+								return err
+							}
+
+							err = os.MkdirAll(fmt.Sprintf("%s/drivers", wd), 0755)
+							if err != nil {
+								return err
+							}
+
+							f, err := os.Create(fmt.Sprintf("%s/drivers/%s.go", wd, strings.ToLower(name)))
+							if err != nil {
+								return err
+							}
+
+							name = strings.ToTitle(name)
+							_, err = f.WriteString(fmt.Sprintf(Driver, name, name))
+							if err != nil {
+								return err
+							}
+
+							f.Sync()
+
+							return f.Close()
+						},
+					},
+					{
+						Name:  "adapter",
+						Usage: "bima create adapter <name>",
+						Action: func(cCtx *cli.Context) error {
+							name := cCtx.Args().First()
+							if name == "" {
+								fmt.Println("Usage: bima create adapter <name>")
+
+								return nil
+							}
+
+							fmt.Println("Creating pagination adapter...")
+
+							wd, err := os.Getwd()
+							if err != nil {
+								return err
+							}
+
+							err = os.MkdirAll(fmt.Sprintf("%s/adapters", wd), 0755)
+							if err != nil {
+								return err
+							}
+
+							f, err := os.Create(fmt.Sprintf("%s/adapters/%s.go", wd, strings.ToLower(name)))
+							if err != nil {
+								return err
+							}
+
+							name = strings.ToTitle(name)
+							_, err = f.WriteString(fmt.Sprintf(Adapter, name, name))
+							if err != nil {
+								return err
+							}
+
+							f.Sync()
+
+							return f.Close()
+						},
+					},
+					{
+						Name:  "route",
+						Usage: "bima create route <name>",
+						Action: func(cCtx *cli.Context) error {
+							name := cCtx.Args().First()
+							if name == "" {
+								fmt.Println("Usage: bima create route <name>")
+
+								return nil
+							}
+
+							fmt.Println("Creating route...")
+
+							wd, err := os.Getwd()
+							if err != nil {
+								return err
+							}
+
+							err = os.MkdirAll(fmt.Sprintf("%s/routes", wd), 0755)
+							if err != nil {
+								return err
+							}
+
+							f, err := os.Create(fmt.Sprintf("%s/routes/%s.go", wd, strings.ToLower(name)))
+							if err != nil {
+								return err
+							}
+
+							name = strings.ToTitle(name)
+							_, err = f.WriteString(fmt.Sprintf(Route, name, name, name, name, name, name, name))
+							if err != nil {
+								return err
+							}
+
+							f.Sync()
+
+							return f.Close()
 						},
 					},
 				},
