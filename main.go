@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	"context"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
@@ -32,11 +32,13 @@ import (
 	"github.com/vito/go-interact/interact"
 	"golang.org/x/mod/modfile"
 	"gopkg.in/yaml.v2"
+	"mvdan.cc/sh/interp"
+	"mvdan.cc/sh/syntax"
 )
 
 var (
-	Version = "v1.0.14"
-	Next    = "v1.0.15"
+	Version = "v1.0.15"
+	Next    = "v1.0.16"
 
 	Adapter = `package adapters
 
@@ -798,40 +800,25 @@ func update() error {
 }
 
 func run(file string) error {
-	cmd := exec.Command("go", "run", "cmd/main.go", file)
-	cmdReader, err := cmd.StdoutPipe()
-	if err != nil {
-		color.New(color.FgRed).Println(err.Error())
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("go run cmd/main.go %s", file)), "")
+	runner, _ := interp.New(
+		interp.Env(nil),
+		interp.StdIO(nil, os.Stdout, os.Stdout),
+	)
 
-		return err
-	}
-
-	scanner := bufio.NewScanner(cmdReader)
-	go func() {
-		for scanner.Scan() {
-			fmt.Printf("%s\n", scanner.Text())
-		}
-	}()
-
-	err = cmd.Start()
-	if err != nil {
-		color.New(color.FgRed).Println(err.Error())
-
-		return err
-	}
-
-	err = cmd.Wait()
-	if err != nil {
-		color.New(color.FgRed).Println(err.Error())
-
-		return err
-	}
-
-	return nil
+	return runner.Run(context.TODO(), cmd)
 }
 
 func genproto() error {
-	return exec.Command("sh", "proto_gen.sh").Run()
+	output, err := exec.Command("sh", "proto_gen.sh").CombinedOutput()
+	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
+		return err
+
+	}
+
+	return nil
 }
 
 func env(config *configs.Env, filePath string, ext string) {

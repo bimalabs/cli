@@ -27,4 +27,5 @@ require (
 	golang.org/x/tools v0.1.11 // indirect
 	google.golang.org/genproto v0.0.0-20220706185917-7780775163c4 // indirect
 	gorm.io/gorm v1.23.8 // indirect
+	mvdan.cc/sh v2.6.4+incompatible
 )
