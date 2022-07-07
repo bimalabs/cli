@@ -35,8 +35,8 @@ import (
 )
 
 var (
-	Version = "v1.0.6"
-	Next    = "v1.0.7"
+	Version = "v1.0.7"
+	Next    = "v1.0.8"
 )
 
 func main() {
@@ -410,7 +410,8 @@ func upgrade() error {
 		return err
 	}
 
-	color.New(color.FgGreen).Println("Bima Cli is already up to date")
+	color.New(color.FgGreen).Print("Bima Cli is upgraded to ")
+	color.New(color.FgGreen, color.Bold).Println(Next)
 
 	return nil
 }
