@@ -388,28 +388,35 @@ func main() {
 
 func upgrade() error {
 	temp := os.TempDir()
-	_, err := exec.Command("git", "clone", "-depth", "1", "-b", Next, "https://github.com/bimalabs/cli.git", fmt.Sprintf("%s/bima", temp)).CombinedOutput()
+	err := os.RemoveAll(fmt.Sprintf("%s/bima", temp))
+	if err != nil {
+		return err
+	}
+
+	_, err = exec.Command("git", "clone", "--depth", "1", "-b", Next, "https://github.com/bimalabs/cli.git", fmt.Sprintf("%sbima", temp)).CombinedOutput()
 	if err != nil {
 		color.New(color.FgGreen).Println("Bima Cli is already up to date")
 
 		return nil
 	}
 
-	err = exec.Command("go", "build", "-o", "bima").Run()
+	err = exec.Command("go", "build", "-o", "bima", fmt.Sprintf("%sbima/main.go", temp)).Run()
 	if err != nil {
 		return err
 	}
 
-	err = exec.Command("mv", fmt.Sprintf("%s/bima", temp), "/usr/local/bin/bima").Run()
+	err = exec.Command("mv", "bima", "/usr/local/bin/bima").Run()
 	if err != nil {
 		return err
 	}
+
+	color.New(color.FgGreen).Println("Bima Cli is already up to date")
 
 	return nil
 }
 
 func create(name string) error {
-	output, err := exec.Command("git", "clone", "-depth", "1", "https://github.com/bimalabs/skeleton.git", name).CombinedOutput()
+	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/skeleton.git", name).CombinedOutput()
 	if err != nil {
 		fmt.Println(string(output))
 
