@@ -35,8 +35,8 @@ import (
 )
 
 var (
-	Version = "v1.0.7"
-	Next    = "v1.0.8"
+	Version = "v1.0.9"
+	Next    = "v1.0.10"
 )
 
 func main() {
