@@ -34,6 +34,11 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var (
+	Version = "v1.0.4"
+	Next    = "v1.0.5"
+)
+
 func main() {
 	var file string
 	app := &cli.App{
@@ -211,6 +216,34 @@ func main() {
 				},
 			},
 			{
+				Name:    "build",
+				Aliases: []string{"install", "b", "i"},
+				Usage:   "build <name>",
+				Action: func(cCtx *cli.Context) error {
+					name := cCtx.Args().First()
+					if name == "" {
+						fmt.Println("Usage: bima build <name>")
+
+						return nil
+					}
+
+					fmt.Println("Bundling application...")
+					if err := clean(); err != nil {
+						color.New(color.FgRed).Println("Error cleaning dependencies")
+
+						return err
+					}
+
+					if err := dump(); err != nil {
+						color.New(color.FgRed).Println("Error update DI container")
+
+						return err
+					}
+
+					return build(name)
+				},
+			},
+			{
 				Name:    "update",
 				Aliases: []string{"u"},
 				Usage:   "update",
@@ -326,8 +359,16 @@ func main() {
 					}
 
 					fmt.Printf("Framework: %s\n", version)
-					fmt.Println("Cli: v1.0.3")
+					fmt.Printf("Cli: %s\n", Version)
 
+					return nil
+				},
+			},
+			{
+				Name:    "upgrade",
+				Aliases: []string{"up"},
+				Usage:   "upgrade",
+				Action: func(*cli.Context) error {
 					return nil
 				},
 			},
@@ -338,6 +379,7 @@ func main() {
 		log.Fatal(err)
 	}
 }
+
 func create(name string) error {
 	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/skeleton.git", name).CombinedOutput()
 	if err != nil {
@@ -377,32 +419,24 @@ func create(name string) error {
 
 	cmd = exec.Command("go", "get")
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
-	output, _ = cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println(string(output))
 
-		return err
-	}
+	return cmd.Run()
+}
 
-	return err
+func build(name string) error {
+	return exec.Command("go", "build", "-o", name, "cmd/main.go").Run()
 }
 
 func dump() error {
-	_, err := exec.Command("go", "run", "dumper/main.go").Output()
-
-	return err
+	return exec.Command("go", "run", "dumper/main.go").Run()
 }
 
 func clean() error {
-	_, err := exec.Command("go", "mod", "tidy").Output()
-
-	return err
+	return exec.Command("go", "mod", "tidy").Run()
 }
 
 func update() error {
-	_, err := exec.Command("go", "get", "-u").Output()
-
-	return err
+	return exec.Command("go", "get", "-u").Run()
 }
 
 func run(file string) error {
@@ -433,9 +467,7 @@ func run(file string) error {
 }
 
 func genproto() error {
-	_, err := exec.Command("sh", "proto_gen.sh").Output()
-
-	return err
+	return exec.Command("sh", "proto_gen.sh").Run()
 }
 
 func env(config *configs.Env, filePath string, ext string) {

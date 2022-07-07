@@ -8,7 +8,7 @@
 
 - Move to your bin folder `sudo mv bima /usr/local/bin/bima`
 
-## Usage
+## Command List
 
 - `bima create app <name>` to create new application
 
@@ -26,6 +26,8 @@
 
 - `bima run` to running application
 
+- `bima build` to building application
+
 - `bima version` to show framework and cli version
 
 ## TODO
@@ -33,5 +35,3 @@
 - Add command to generate `middleware`, `route`, `pagination adapter` and `driver`
 
 - Direct output from skeleton (show)
-
-- Upgrade `bima` version
