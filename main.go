@@ -638,12 +638,9 @@ func main() {
 
 func upgrade() error {
 	temp := os.TempDir()
-	err := os.RemoveAll(fmt.Sprintf("%s/bima", temp))
-	if err != nil {
-		return err
-	}
+	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
 
-	_, err = exec.Command("git", "clone", "--depth", "1", "-b", Next, "https://github.com/bimalabs/cli.git", fmt.Sprintf("%sbima", temp)).CombinedOutput()
+	_, err := exec.Command("git", "clone", "--depth", "1", "-b", Next, "https://github.com/bimalabs/cli.git", fmt.Sprintf("%sbima", temp)).CombinedOutput()
 	if err != nil {
 		color.New(color.FgGreen).Println("Bima Cli is already up to date")
 
