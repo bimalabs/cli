@@ -3,7 +3,7 @@ tasks:
     install:
         cmds:
             - go build -o bima
-            - mv bima ../bin/bima
+            - mv bima /usr/local/bin/bima
     test:
         cmds:
             - go test -coverprofile /tmp/coverage ./... -v
@@ -21,4 +21,3 @@ tasks:
     update:
         cmds:
             - go get -u
-    
