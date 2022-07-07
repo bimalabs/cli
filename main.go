@@ -640,20 +640,56 @@ func upgrade() error {
 	temp := os.TempDir()
 	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
 
-	_, err := exec.Command("git", "clone", "--depth", "1", "-b", Next, "https://github.com/bimalabs/cli.git", fmt.Sprintf("%sbima", temp)).CombinedOutput()
+	fmt.Println("Checking new update...")
+	err := exec.Command("git", "clone", "--depth", "1", "-b", Next, "https://github.com/bimalabs/cli.git", fmt.Sprintf("%sbima", temp)).Run()
 	if err != nil {
 		color.New(color.FgGreen).Println("Bima Cli is already up to date")
 
 		return nil
 	}
 
-	err = exec.Command("go", "build", "-o", "bima", fmt.Sprintf("%sbima/main.go", temp)).Run()
+	cmd := exec.Command("go", "get")
+	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Run()
+
+	cmd = exec.Command("go", "mod", "tidy")
+	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Run()
+
+	cmd = exec.Command("go", "run", "dumper/main.go")
+	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	output, err := cmd.CombinedOutput()
 	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
 		return err
 	}
 
-	err = exec.Command("mv", "bima", "/usr/local/bin/bima").Run()
+	cmd = exec.Command("go", "get", "-u")
+	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	output, err = cmd.CombinedOutput()
 	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
+		return err
+	}
+
+	fmt.Println("Building bima cli...")
+	cmd = exec.Command("go", "build", "-o", "bima")
+	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	output, err = cmd.CombinedOutput()
+	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
+		return err
+	}
+
+	cmd = exec.Command("mv", "bima", "/usr/local/bin/bima")
+	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	output, err = cmd.CombinedOutput()
+	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
 		return err
 	}
 
@@ -666,21 +702,21 @@ func upgrade() error {
 func create(name string) error {
 	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/skeleton.git", name).CombinedOutput()
 	if err != nil {
-		fmt.Println(string(output))
+		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
 
 	output, err = exec.Command("rm", "-rf", fmt.Sprintf("%s/.git", name)).CombinedOutput()
 	if err != nil {
-		fmt.Println(string(output))
+		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
 
 	output, err = exec.Command("cp", fmt.Sprintf("%s/.example.env", name), fmt.Sprintf("%s/.env", name)).CombinedOutput()
 	if err != nil {
-		fmt.Println(string(output))
+		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
@@ -689,43 +725,83 @@ func create(name string) error {
 
 	cmd := exec.Command("go", "get")
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
-	output, _ = cmd.CombinedOutput()
+	cmd.Run()
 
 	cmd = exec.Command("go", "run", "dumper/main.go")
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
 	output, err = cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(string(output))
+		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
 
-	cmd = exec.Command("go", "get")
+	cmd = exec.Command("go", "get", "-u")
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
+	output, err = cmd.CombinedOutput()
+	if err != nil {
+		color.New(color.FgRed).Println(string(output))
 
-	return cmd.Run()
+		return err
+	}
+
+	return nil
 }
 
 func build(name string) error {
-	return exec.Command("go", "build", "-o", name, "cmd/main.go").Run()
+	output, err := exec.Command("go", "build", "-o", name, "cmd/main.go").CombinedOutput()
+	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
+		return err
+
+	}
+
+	return nil
 }
 
 func dump() error {
-	return exec.Command("go", "run", "dumper/main.go").Run()
+	output, err := exec.Command("go", "run", "dumper/main.go").CombinedOutput()
+	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
+		return err
+
+	}
+
+	return nil
 }
 
 func clean() error {
-	return exec.Command("go", "mod", "tidy").Run()
+	output, err := exec.Command("go", "mod", "tidy").CombinedOutput()
+	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
+		return err
+
+	}
+
+	return nil
 }
 
 func update() error {
-	return exec.Command("go", "get", "-u").Run()
+	output, err := exec.Command("go", "get", "-u").CombinedOutput()
+	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
+		return err
+
+	}
+
+	return nil
 }
 
 func run(file string) error {
 	cmd := exec.Command("go", "run", "cmd/main.go", file)
 	cmdReader, err := cmd.StdoutPipe()
 	if err != nil {
+		color.New(color.FgRed).Println(err.Error())
+
 		return err
 	}
 
@@ -738,11 +814,15 @@ func run(file string) error {
 
 	err = cmd.Start()
 	if err != nil {
+		color.New(color.FgRed).Println(err.Error())
+
 		return err
 	}
 
 	err = cmd.Wait()
 	if err != nil {
+		color.New(color.FgRed).Println(err.Error())
+
 		return err
 	}
 
@@ -826,6 +906,8 @@ func register(generator *generators.Factory, util *color.Color, name string) err
 	for more {
 		err := interact.NewInteraction("Add new column?").Resolve(&more)
 		if err != nil {
+			color.New(color.FgRed).Println(err.Error())
+
 			return err
 		}
 
