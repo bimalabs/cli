@@ -35,8 +35,8 @@ import (
 )
 
 var (
-	Version = "v1.0.4"
-	Next    = "v1.0.5"
+	Version = "v1.0.5"
+	Next    = "v1.0.6"
 )
 
 func main() {
@@ -125,7 +125,7 @@ func main() {
 								generator.ApiVersion = cCtx.Args().Get(1)
 							}
 
-							util := color.New(color.FgCyan, color.Bold)
+							util := color.New(color.FgGreen, color.Bold)
 
 							err = register(generator, util, module)
 							if err != nil {
@@ -181,7 +181,7 @@ func main() {
 								return err
 							}
 
-							util := color.New(color.FgCyan, color.Bold)
+							util := color.New(color.FgGreen, color.Bold)
 
 							unregister(util, module)
 							if err := dump(); err != nil {
@@ -339,17 +339,23 @@ func main() {
 					path.WriteString(wd)
 					path.WriteString("/go.mod")
 
+					version := "unknown"
 					mod, err := os.ReadFile(path.String())
 					if err != nil {
-						return err
+						fmt.Printf("Framework: %s\n", version)
+						fmt.Printf("Cli: %s\n", Version)
+
+						return nil
 					}
 
 					f, err := modfile.Parse(path.String(), mod, nil)
 					if err != nil {
-						return err
+						fmt.Printf("Framework: %s\n", version)
+						fmt.Printf("Cli: %s\n", Version)
+
+						return nil
 					}
 
-					version := "unknown"
 					for _, v := range f.Require {
 						if v.Mod.Path == "github.com/bimalabs/framework/v4" {
 							version = v.Mod.Version
@@ -369,7 +375,7 @@ func main() {
 				Aliases: []string{"up"},
 				Usage:   "upgrade",
 				Action: func(*cli.Context) error {
-					return nil
+					return upgrade()
 				},
 			},
 		},
@@ -380,8 +386,30 @@ func main() {
 	}
 }
 
+func upgrade() error {
+	temp := os.TempDir()
+	_, err := exec.Command("git", "clone", "-depth", "1", "-b", Next, "https://github.com/bimalabs/cli.git", fmt.Sprintf("%s/bima", temp)).CombinedOutput()
+	if err != nil {
+		color.New(color.FgGreen).Println("Bima Cli is already up to date")
+
+		return nil
+	}
+
+	err = exec.Command("go", "build", "-o", "bima").Run()
+	if err != nil {
+		return err
+	}
+
+	err = exec.Command("mv", fmt.Sprintf("%s/bima", temp), "/usr/local/bin/bima").Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func create(name string) error {
-	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/skeleton.git", name).CombinedOutput()
+	output, err := exec.Command("git", "clone", "-depth", "1", "https://github.com/bimalabs/skeleton.git", name).CombinedOutput()
 	if err != nil {
 		fmt.Println(string(output))
 
