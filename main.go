@@ -35,8 +35,8 @@ import (
 )
 
 var (
-	Version = "v1.0.12"
-	Next    = "v1.0.13"
+	Version = "v1.0.13"
+	Next    = "v1.0.14"
 
 	Adapter = `package adapters
 
