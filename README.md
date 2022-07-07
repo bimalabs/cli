@@ -30,6 +30,8 @@
 
 - `bima version` to show framework and cli version
 
+- `bima upgrade` to upgrade cli version
+
 ## TODO
 
 - Add command to generate `middleware`, `route`, `pagination adapter` and `driver`
