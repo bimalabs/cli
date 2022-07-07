@@ -35,8 +35,8 @@ import (
 )
 
 var (
-	Version = "v1.0.13"
-	Next    = "v1.0.14"
+	Version = "v1.0.14"
+	Next    = "v1.0.15"
 
 	Adapter = `package adapters
 
@@ -55,7 +55,6 @@ func (a *%s) CreateAdapter(ctx context.Context, paginator paginations.Pagination
 
     return nil
 }
-
 `
 
 	Driver = `package drivers
@@ -64,8 +63,7 @@ import (
     "gorm.io/gorm"
 )
 
-type %s struct {
-}
+type %s string
 
 func (_ %s) Connect(host string, port int, user string, password string, dbname string, debug bool) *gorm.DB {
     // TODO
@@ -73,6 +71,9 @@ func (_ %s) Connect(host string, port int, user string, password string, dbname 
     return nil
 }
 
+func (m %s) Name() string {
+	return string(m)
+}
 `
 
 	Route = `package routes
@@ -239,7 +240,7 @@ func main() {
 							}
 
 							name = strings.ToTitle(name)
-							_, err = f.WriteString(fmt.Sprintf(Driver, name, name))
+							_, err = f.WriteString(fmt.Sprintf(Driver, name, name, name))
 							if err != nil {
 								return err
 							}
