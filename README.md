@@ -12,6 +12,14 @@
 
 - `bima create app <name>` to create new application
 
+- `bima create middleware <name>` to create middleware under `middlewares` folder
+
+- `bima create route <name>` to create route under `routes` folder
+
+- `bima create driver <name>` to create database driver under `drivers` folder
+
+- `bima create adapter <name>` to create pagination adapter under `adapters` folder
+
 - `bima module add <name>` to add new module
 
 - `bima module remove <name>` to remove module
@@ -31,9 +39,3 @@
 - `bima version` to show framework and cli version
 
 - `bima upgrade` to upgrade cli version
-
-## TODO
-
-- Add command to generate `middleware`, `route`, `pagination adapter` and `driver`
-
-- Direct output from skeleton (show)
