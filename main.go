@@ -37,8 +37,8 @@ import (
 )
 
 var (
-	Version = "v1.0.15"
-	Next    = "v1.0.16"
+	Version = "v1.0.16"
+	Next    = "v1.0.17"
 
 	Adapter = `package adapters
 
@@ -752,59 +752,36 @@ func create(name string) error {
 }
 
 func build(name string) error {
-	output, err := exec.Command("go", "build", "-o", name, "cmd/main.go").CombinedOutput()
-	if err != nil {
-		color.New(color.FgRed).Println(string(output))
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("go build -o %s cmd/main.go", name)), "")
+	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
-		return err
-
-	}
-
-	return nil
+	return runner.Run(context.TODO(), cmd)
 }
 
 func dump() error {
-	output, err := exec.Command("go", "run", "dumper/main.go").CombinedOutput()
-	if err != nil {
-		color.New(color.FgRed).Println(string(output))
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader("go run dumper/main.go"), "")
+	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
-		return err
-
-	}
-
-	return nil
+	return runner.Run(context.TODO(), cmd)
 }
 
 func clean() error {
-	output, err := exec.Command("go", "mod", "tidy").CombinedOutput()
-	if err != nil {
-		color.New(color.FgRed).Println(string(output))
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader("go mod tidy"), "")
+	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
-		return err
-
-	}
-
-	return nil
+	return runner.Run(context.TODO(), cmd)
 }
 
 func update() error {
-	output, err := exec.Command("go", "get", "-u").CombinedOutput()
-	if err != nil {
-		color.New(color.FgRed).Println(string(output))
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader("go get -u"), "")
+	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
-		return err
-
-	}
-
-	return nil
+	return runner.Run(context.TODO(), cmd)
 }
 
 func run(file string) error {
 	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("go run cmd/main.go %s", file)), "")
-	runner, _ := interp.New(
-		interp.Env(nil),
-		interp.StdIO(nil, os.Stdout, os.Stdout),
-	)
+	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
 	return runner.Run(context.TODO(), cmd)
 }
