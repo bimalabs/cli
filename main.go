@@ -38,9 +38,9 @@ import (
 )
 
 var (
-	Version     = "v1.1.1"
+	Version     = "v1.1.2"
 	SpinerIndex = 9
-	Duration    = 27 * time.Millisecond
+	Duration    = 77 * time.Millisecond
 
 	Adapter = `package adapters
 
