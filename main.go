@@ -38,7 +38,7 @@ import (
 )
 
 var (
-	Version     = "v1.1.2"
+	Version     = "v1.1.3"
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
 
@@ -165,11 +165,14 @@ func main() {
 
 							err := create(name)
 							if err == nil {
+								progress.Stop()
+								fmt.Printf("%s application created\n", color.New(color.FgGreen).Sprint(strings.Title(name)))
+
 								util := color.New(color.Bold)
 
 								fmt.Print("Move to ")
 								util.Print(name)
-								fmt.Println(" folder and type ")
+								fmt.Print(" folder and type ")
 								util.Println("bima run")
 							}
 
@@ -505,10 +508,6 @@ func main() {
 								return err
 							}
 
-							util = color.New(color.FgGreen)
-							util.Print("By: ")
-							util.Println("Bimalabs")
-
 							return nil
 						},
 					},
@@ -545,10 +544,6 @@ func main() {
 								return err
 							}
 
-							util = color.New(color.FgGreen)
-							util.Print("By: ")
-							util.Println("Bimalabs")
-
 							return nil
 						},
 					},
@@ -559,9 +554,15 @@ func main() {
 				Aliases: []string{"d"},
 				Usage:   "dump",
 				Action: func(*cli.Context) error {
-					fmt.Println("Generate dic codes...")
+					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress.Prefix = "Generate service container... "
+					progress.Start()
+					time.Sleep(1 * time.Second)
 
-					return dump()
+					err := dump()
+					progress.Stop()
+
+					return err
 				},
 			},
 			{
@@ -576,20 +577,27 @@ func main() {
 						return nil
 					}
 
-					fmt.Println("Bundling application...")
+					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress.Prefix = "Bundling application... "
+					progress.Start()
 					if err := clean(); err != nil {
+						progress.Stop()
 						color.New(color.FgRed).Println("Error cleaning dependencies")
 
 						return err
 					}
 
 					if err := dump(); err != nil {
+						progress.Stop()
 						color.New(color.FgRed).Println("Error update DI container")
 
 						return err
 					}
 
-					return build(name)
+					err := build(name)
+					progress.Stop()
+
+					return err
 				},
 			},
 			{
@@ -674,6 +682,8 @@ func main() {
 
 						return err
 					}
+
+					progress.Stop()
 
 					return nil
 				},
