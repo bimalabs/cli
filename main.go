@@ -23,6 +23,7 @@ import (
 	"github.com/bimalabs/framework/v4/generators"
 	"github.com/bimalabs/framework/v4/parsers"
 	"github.com/bimalabs/framework/v4/utils"
+	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
 	"github.com/gertd/go-pluralize"
 	"github.com/iancoleman/strcase"
@@ -37,7 +38,7 @@ import (
 )
 
 var (
-	Version = "v1.0.17"
+	Version = "v1.1.0"
 
 	Adapter = `package adapters
 
@@ -156,7 +157,9 @@ func main() {
 								return nil
 							}
 
-							fmt.Println("Creating new application...")
+							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress.Prefix = "Creating new application... "
+							progress.Start()
 
 							err := create(name)
 							if err == nil {
@@ -167,6 +170,8 @@ func main() {
 								fmt.Println(" folder and type ")
 								util.Println("bima run")
 							}
+
+							progress.Stop()
 
 							return err
 						},
@@ -183,26 +188,37 @@ func main() {
 								return nil
 							}
 
-							fmt.Println("Creating middleware...")
+							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress.Prefix = "Creating middleware... "
+							progress.Start()
+							time.Sleep(1 * time.Second)
 
 							wd, err := os.Getwd()
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
 							err = os.MkdirAll(fmt.Sprintf("%s/middlewares", wd), 0755)
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
 							f, err := os.Create(fmt.Sprintf("%s/middlewares/%s.go", wd, strings.ToLower(name)))
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
-							name = strings.ToTitle(name)
+							name = strings.Title(name)
 							_, err = f.WriteString(fmt.Sprintf(Middleware, name, name, name))
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
@@ -210,10 +226,14 @@ func main() {
 							f.Close()
 
 							if err := clean(); err != nil {
+								progress.Stop()
 								color.New(color.FgRed).Println("Error cleaning dependencies")
 
 								return err
 							}
+
+							progress.Stop()
+							fmt.Printf("Middleware %s created\n", color.New(color.FgGreen).Sprint(name))
 
 							return nil
 						},
@@ -229,26 +249,37 @@ func main() {
 								return nil
 							}
 
-							fmt.Println("Creating database driver...")
+							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress.Prefix = "Creating database driver... "
+							progress.Start()
+							time.Sleep(1 * time.Second)
 
 							wd, err := os.Getwd()
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
 							err = os.MkdirAll(fmt.Sprintf("%s/drivers", wd), 0755)
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
 							f, err := os.Create(fmt.Sprintf("%s/drivers/%s.go", wd, strings.ToLower(name)))
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
-							name = strings.ToTitle(name)
+							name = strings.Title(name)
 							_, err = f.WriteString(fmt.Sprintf(Driver, name, name, name))
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
@@ -256,10 +287,14 @@ func main() {
 							f.Close()
 
 							if err := clean(); err != nil {
+								progress.Stop()
 								color.New(color.FgRed).Println("Error cleaning dependencies")
 
 								return err
 							}
+
+							progress.Stop()
+							fmt.Printf("Driver %s created\n", color.New(color.FgGreen).Sprint(name))
 
 							return nil
 						},
@@ -275,26 +310,37 @@ func main() {
 								return nil
 							}
 
-							fmt.Println("Creating pagination adapter...")
+							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress.Prefix = "Creating pagination adapter... "
+							progress.Start()
+							time.Sleep(1 * time.Second)
 
 							wd, err := os.Getwd()
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
 							err = os.MkdirAll(fmt.Sprintf("%s/adapters", wd), 0755)
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
 							f, err := os.Create(fmt.Sprintf("%s/adapters/%s.go", wd, strings.ToLower(name)))
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
-							name = strings.ToTitle(name)
+							name = strings.Title(name)
 							_, err = f.WriteString(fmt.Sprintf(Adapter, name, name))
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
@@ -302,10 +348,15 @@ func main() {
 							f.Close()
 
 							if err := clean(); err != nil {
+								progress.Stop()
+
 								color.New(color.FgRed).Println("Error cleaning dependencies")
 
 								return err
 							}
+
+							progress.Stop()
+							fmt.Printf("Adapter %s created\n", color.New(color.FgGreen).Sprint(name))
 
 							return nil
 						},
@@ -321,26 +372,38 @@ func main() {
 								return nil
 							}
 
-							fmt.Println("Creating route...")
+							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress.Prefix = "Creating route placeholder... "
+							progress.Start()
+							time.Sleep(1 * time.Second)
 
 							wd, err := os.Getwd()
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
 							err = os.MkdirAll(fmt.Sprintf("%s/routes", wd), 0755)
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
-							f, err := os.Create(fmt.Sprintf("%s/routes/%s.go", wd, strings.ToLower(name)))
+							lName := strings.ToLower(name)
+							f, err := os.Create(fmt.Sprintf("%s/routes/%s.go", wd, lName))
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
-							name = strings.ToTitle(name)
-							_, err = f.WriteString(fmt.Sprintf(Route, name, name, strings.ToLower(name), name, name, name, name))
+							name = strings.Title(name)
+							_, err = f.WriteString(fmt.Sprintf(Route, name, name, lName, name, name, name, name))
 							if err != nil {
+								progress.Stop()
+
 								return err
 							}
 
@@ -348,10 +411,15 @@ func main() {
 							f.Close()
 
 							if err := clean(); err != nil {
+								progress.Stop()
+
 								color.New(color.FgRed).Println("Error cleaning dependencies")
 
 								return err
 							}
+
+							progress.Stop()
+							fmt.Printf("Route %s created\n", color.New(color.FgGreen).Sprint(name))
 
 							return nil
 						},
