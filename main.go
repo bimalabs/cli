@@ -38,7 +38,7 @@ import (
 )
 
 var (
-	Version     = "v1.1.3"
+	Version     = "v1.1.4"
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
 
@@ -139,8 +139,9 @@ func (m *%s) Priority() int {
 func main() {
 	var file string
 	app := &cli.App{
-		Name:  "Bima Cli",
-		Usage: "Bima Framework Toolkit",
+		Name:                 "Bima Cli",
+		Usage:                "Bima Framework Toolkit",
+		EnableBashCompletion: true,
 		Commands: []*cli.Command{
 			{
 				Name:    "create",
