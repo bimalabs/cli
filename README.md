@@ -24,7 +24,7 @@
 
 - `bima module remove <name>` to remove module
 
-- `bima dump` to generate dic codes
+- `bima dump` to generate service container codes
 
 - `bima update` to update framework and dependencies
 

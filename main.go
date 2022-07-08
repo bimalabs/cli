@@ -42,6 +42,13 @@ var (
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
 
+	Env = `APP_DEBUG=true
+APP_PORT=7777
+GRPC_PORT=1717
+APP_NAME=%s
+APP_SECRET=%s
+    `
+
 	Adapter = `package adapters
 
 import (
@@ -161,7 +168,7 @@ func main() {
 							}
 
 							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-							progress.Prefix = "Creating new application... "
+							progress.Suffix = " Creating new application... "
 							progress.Start()
 
 							err := create(name)
@@ -195,7 +202,7 @@ func main() {
 							}
 
 							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-							progress.Prefix = "Creating middleware... "
+							progress.Suffix = " Creating middleware... "
 							progress.Start()
 							time.Sleep(1 * time.Second)
 
@@ -256,7 +263,7 @@ func main() {
 							}
 
 							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-							progress.Prefix = "Creating database driver... "
+							progress.Suffix = " Creating database driver... "
 							progress.Start()
 							time.Sleep(1 * time.Second)
 
@@ -317,7 +324,7 @@ func main() {
 							}
 
 							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-							progress.Prefix = "Creating pagination adapter... "
+							progress.Suffix = " Creating pagination adapter... "
 							progress.Start()
 							time.Sleep(1 * time.Second)
 
@@ -379,7 +386,7 @@ func main() {
 							}
 
 							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-							progress.Prefix = "Creating route placeholder... "
+							progress.Suffix = " Creating route placeholder... "
 							progress.Start()
 							time.Sleep(1 * time.Second)
 
@@ -556,7 +563,7 @@ func main() {
 				Usage:   "dump",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-					progress.Prefix = "Generate service container... "
+					progress.Suffix = " Generate service container... "
 					progress.Start()
 					time.Sleep(1 * time.Second)
 
@@ -579,7 +586,7 @@ func main() {
 					}
 
 					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-					progress.Prefix = "Bundling application... "
+					progress.Suffix = " Bundling application... "
 					progress.Start()
 					if err := clean(); err != nil {
 						progress.Stop()
@@ -607,7 +614,7 @@ func main() {
 				Usage:   "update",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-					progress.Prefix = "Updating dependencies... "
+					progress.Suffix = " Updating dependencies... "
 					progress.Start()
 					if err := update(); err != nil {
 						progress.Stop()
@@ -634,7 +641,7 @@ func main() {
 				Usage:   "clean",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-					progress.Prefix = "Cleaning dependencies... "
+					progress.Suffix = " Cleaning dependencies... "
 					progress.Start()
 					if err := clean(); err != nil {
 						progress.Stop()
@@ -661,7 +668,7 @@ func main() {
 				Usage:   "generate",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-					progress.Prefix = "Generating protobuff... "
+					progress.Suffix = " Generating protobuff... "
 					progress.Start()
 					if err := genproto(); err != nil {
 						progress.Stop()
@@ -768,7 +775,7 @@ func upgrade() error {
 	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
 
 	progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-	progress.Prefix = "Checking new update... "
+	progress.Suffix = " Checking new update... "
 	progress.Start()
 
 	wd := fmt.Sprintf("%sbima", temp)
@@ -803,7 +810,7 @@ func upgrade() error {
 	progress.Stop()
 
 	progress = spinner.New(spinner.CharSets[SpinerIndex], Duration)
-	progress.Prefix = "Updating Bima Cli... "
+	progress.Suffix = " Updating Bima Cli... "
 	progress.Start()
 
 	cmd = exec.Command("git", "fetch")
@@ -896,12 +903,25 @@ func create(name string) error {
 		return err
 	}
 
-	output, err = exec.Command("cp", fmt.Sprintf("%s/.example.env", name), fmt.Sprintf("%s/.env", name)).CombinedOutput()
+	f, err := os.Create(fmt.Sprintf("%s/.env", name))
 	if err != nil {
 		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
+
+	hasher := sha256.New()
+	hasher.Write([]byte(time.Now().Format(time.RFC3339)))
+
+	_, err = f.WriteString(fmt.Sprintf(Env, name, base64.URLEncoding.EncodeToString(hasher.Sum(nil))))
+	if err != nil {
+		color.New(color.FgRed).Println(string(output))
+
+		return err
+	}
+
+	f.Sync()
+	f.Close()
 
 	wd, _ := os.Getwd()
 
@@ -998,13 +1018,6 @@ func env(config *configs.Env, filePath string, ext string) {
 			log.Fatalln(err.Error())
 		}
 	}
-
-	if config.Secret == "" {
-		hasher := sha256.New()
-		hasher.Write([]byte(time.Now().Format(time.RFC3339)))
-
-		config.Secret = base64.URLEncoding.EncodeToString(hasher.Sum(nil))
-	}
 }
 
 func parse(config *configs.Env) {
@@ -1012,12 +1025,7 @@ func parse(config *configs.Env) {
 	config.Debug, _ = strconv.ParseBool(os.Getenv("APP_DEBUG"))
 	config.HttpPort, _ = strconv.Atoi(os.Getenv("APP_PORT"))
 	config.RpcPort, _ = strconv.Atoi(os.Getenv("GRPC_PORT"))
-
-	sName := os.Getenv("APP_NAME")
-	config.Service = configs.Service{
-		Name:           sName,
-		ConnonicalName: strcase.ToDelimited(sName, '_'),
-	}
+	config.Service = os.Getenv("APP_NAME")
 
 	dbPort, _ := strconv.Atoi(os.Getenv("DB_PORT"))
 	config.Db = configs.Db{
