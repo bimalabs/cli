@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "debugAdapter":"dlv-dap",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceRoot}",
+            "args": [
+                "upgrade"
+            ],
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}
