@@ -38,7 +38,9 @@ import (
 )
 
 var (
-	Version = "v1.1.0"
+	Version     = "v1.1.1"
+	SpinerIndex = 9
+	Duration    = 27 * time.Millisecond
 
 	Adapter = `package adapters
 
@@ -157,7 +159,7 @@ func main() {
 								return nil
 							}
 
-							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
 							progress.Prefix = "Creating new application... "
 							progress.Start()
 
@@ -188,7 +190,7 @@ func main() {
 								return nil
 							}
 
-							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
 							progress.Prefix = "Creating middleware... "
 							progress.Start()
 							time.Sleep(1 * time.Second)
@@ -249,7 +251,7 @@ func main() {
 								return nil
 							}
 
-							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
 							progress.Prefix = "Creating database driver... "
 							progress.Start()
 							time.Sleep(1 * time.Second)
@@ -310,7 +312,7 @@ func main() {
 								return nil
 							}
 
-							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
 							progress.Prefix = "Creating pagination adapter... "
 							progress.Start()
 							time.Sleep(1 * time.Second)
@@ -372,7 +374,7 @@ func main() {
 								return nil
 							}
 
-							progress := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+							progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
 							progress.Prefix = "Creating route placeholder... "
 							progress.Start()
 							time.Sleep(1 * time.Second)
@@ -595,18 +597,24 @@ func main() {
 				Aliases: []string{"u"},
 				Usage:   "update",
 				Action: func(*cli.Context) error {
-					fmt.Println("Updating dependencies...")
+					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress.Prefix = "Updating dependencies... "
+					progress.Start()
 					if err := update(); err != nil {
+						progress.Stop()
 						color.New(color.FgRed).Println("Error update dependencies")
 
 						return err
 					}
 
 					if err := dump(); err != nil {
+						progress.Stop()
 						color.New(color.FgRed).Println("Error update DI container")
 
 						return err
 					}
+
+					progress.Stop()
 
 					return nil
 				},
@@ -616,18 +624,24 @@ func main() {
 				Aliases: []string{"c"},
 				Usage:   "clean",
 				Action: func(*cli.Context) error {
-					fmt.Println("Cleaning dependencies...")
+					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress.Prefix = "Cleaning dependencies... "
+					progress.Start()
 					if err := clean(); err != nil {
+						progress.Stop()
 						color.New(color.FgRed).Println("Error cleaning dependencies")
 
 						return err
 					}
 
 					if err := dump(); err != nil {
+						progress.Stop()
 						color.New(color.FgRed).Println("Error update DI container")
 
 						return err
 					}
+
+					progress.Stop()
 
 					return nil
 				},
@@ -637,20 +651,25 @@ func main() {
 				Aliases: []string{"gen", "genproto", "g"},
 				Usage:   "generate",
 				Action: func(*cli.Context) error {
-					fmt.Println("Generating protobuff...")
+					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress.Prefix = "Generating protobuff... "
+					progress.Start()
 					if err := genproto(); err != nil {
+						progress.Stop()
 						color.New(color.FgRed).Println("Error generate protobuff")
 
 						return err
 					}
 
 					if err := clean(); err != nil {
+						progress.Stop()
 						color.New(color.FgRed).Println("Error cleaning dependencies")
 
 						return err
 					}
 
 					if err := dump(); err != nil {
+						progress.Stop()
 						color.New(color.FgRed).Println("Error update DI container")
 
 						return err
@@ -737,78 +756,114 @@ func upgrade() error {
 	temp := os.TempDir()
 	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
 
-	fmt.Println("Checking new update...")
-	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/cli.git", fmt.Sprintf("%sbima", temp)).CombinedOutput()
+	progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+	progress.Prefix = "Checking new update... "
+	progress.Start()
+
+	wd := fmt.Sprintf("%sbima", temp)
+	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/cli.git", wd).CombinedOutput()
 	if err != nil {
-		color.New(color.FgGreen).Println(string(output))
+		progress.Stop()
+		color.New(color.FgRed).Println(string(output))
 
 		return nil
 	}
 
 	cmd := exec.Command("git", "rev-list", "--tags", "--max-count=1")
-	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 
 	re := regexp.MustCompile(`\r?\n`)
 	commitId := re.ReplaceAllString(string(output), "")
 
 	cmd = exec.Command("git", "describe", "--tags", commitId)
-	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 
 	re = regexp.MustCompile(`\r?\n`)
 	latest := re.ReplaceAllString(string(output), "")
 	if latest == Version {
+		progress.Stop()
 		color.New(color.FgGreen).Println("Bima Cli is already up to date")
 
 		return nil
 	}
 
+	progress.Stop()
+
+	progress = spinner.New(spinner.CharSets[SpinerIndex], Duration)
+	progress.Prefix = "Updating Bima Cli... "
+	progress.Start()
+
+	cmd = exec.Command("git", "fetch")
+	cmd.Dir = wd
+	err = cmd.Run()
+	if err != nil {
+		progress.Stop()
+		color.New(color.FgRed).Println(string(output))
+
+		return nil
+	}
+
+	cmd = exec.Command("git", "checkout", latest)
+	cmd.Dir = wd
+	err = cmd.Run()
+	if err != nil {
+		progress.Stop()
+		color.New(color.FgRed).Println(string(output))
+
+		return nil
+	}
+
 	cmd = exec.Command("go", "get")
-	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Dir = wd
 	cmd.Run()
 
 	cmd = exec.Command("go", "mod", "tidy")
-	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Dir = wd
 	cmd.Run()
 
 	cmd = exec.Command("go", "run", "dumper/main.go")
-	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
 
 	cmd = exec.Command("go", "get", "-u")
-	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
 
-	fmt.Println("Building bima cli...")
 	cmd = exec.Command("go", "build", "-o", "bima")
-	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
 
 	cmd = exec.Command("mv", "bima", "/usr/local/bin/bima")
-	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
 
+	progress.Stop()
 	color.New(color.FgGreen).Print("Bima Cli is upgraded to ")
 	color.New(color.FgGreen, color.Bold).Println(latest)
 
