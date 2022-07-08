@@ -37,8 +37,7 @@ import (
 )
 
 var (
-	Version = "v1.0.16"
-	Next    = "v1.0.17"
+	Version = "v1.0.17"
 
 	Adapter = `package adapters
 
@@ -82,7 +81,6 @@ func (m %s) Name() string {
 
 import (
     "net/http"
-    "strings"
 
     "github.com/bimalabs/framework/v4/middlewares"
     "google.golang.org/grpc"
@@ -92,7 +90,7 @@ type %s struct {
 }
 
 func (r *%s) Path() string {
-    return /%s
+    return "/%s"
 }
 
 func (r *%s) Method() string {
@@ -209,8 +207,15 @@ func main() {
 							}
 
 							f.Sync()
+							f.Close()
 
-							return f.Close()
+							if err := clean(); err != nil {
+								color.New(color.FgRed).Println("Error cleaning dependencies")
+
+								return err
+							}
+
+							return nil
 						},
 					},
 					{
@@ -248,8 +253,15 @@ func main() {
 							}
 
 							f.Sync()
+							f.Close()
 
-							return f.Close()
+							if err := clean(); err != nil {
+								color.New(color.FgRed).Println("Error cleaning dependencies")
+
+								return err
+							}
+
+							return nil
 						},
 					},
 					{
@@ -287,8 +299,15 @@ func main() {
 							}
 
 							f.Sync()
+							f.Close()
 
-							return f.Close()
+							if err := clean(); err != nil {
+								color.New(color.FgRed).Println("Error cleaning dependencies")
+
+								return err
+							}
+
+							return nil
 						},
 					},
 					{
@@ -320,14 +339,21 @@ func main() {
 							}
 
 							name = strings.ToTitle(name)
-							_, err = f.WriteString(fmt.Sprintf(Route, name, name, name, name, name, name, name))
+							_, err = f.WriteString(fmt.Sprintf(Route, name, name, strings.ToLower(name), name, name, name, name))
 							if err != nil {
 								return err
 							}
 
 							f.Sync()
+							f.Close()
 
-							return f.Close()
+							if err := clean(); err != nil {
+								color.New(color.FgRed).Println("Error cleaning dependencies")
+
+								return err
+							}
+
+							return nil
 						},
 					},
 				},
@@ -644,14 +670,33 @@ func upgrade() error {
 	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
 
 	fmt.Println("Checking new update...")
-	err := exec.Command("git", "clone", "--depth", "1", "-b", Next, "https://github.com/bimalabs/cli.git", fmt.Sprintf("%sbima", temp)).Run()
+	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/cli.git", fmt.Sprintf("%sbima", temp)).CombinedOutput()
 	if err != nil {
+		color.New(color.FgGreen).Println(string(output))
+
+		return nil
+	}
+
+	cmd := exec.Command("git", "rev-list", "--tags", "--max-count=1")
+	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	output, err = cmd.CombinedOutput()
+
+	re := regexp.MustCompile(`\r?\n`)
+	commitId := re.ReplaceAllString(string(output), "")
+
+	cmd = exec.Command("git", "describe", "--tags", commitId)
+	cmd.Dir = fmt.Sprintf("%sbima", temp)
+	output, err = cmd.CombinedOutput()
+
+	re = regexp.MustCompile(`\r?\n`)
+	latest := re.ReplaceAllString(string(output), "")
+	if latest == Version {
 		color.New(color.FgGreen).Println("Bima Cli is already up to date")
 
 		return nil
 	}
 
-	cmd := exec.Command("go", "get")
+	cmd = exec.Command("go", "get")
 	cmd.Dir = fmt.Sprintf("%sbima", temp)
 	cmd.Run()
 
@@ -661,7 +706,7 @@ func upgrade() error {
 
 	cmd = exec.Command("go", "run", "dumper/main.go")
 	cmd.Dir = fmt.Sprintf("%sbima", temp)
-	output, err := cmd.CombinedOutput()
+	output, err = cmd.CombinedOutput()
 	if err != nil {
 		color.New(color.FgRed).Println(string(output))
 
@@ -697,7 +742,7 @@ func upgrade() error {
 	}
 
 	color.New(color.FgGreen).Print("Bima Cli is upgraded to ")
-	color.New(color.FgGreen, color.Bold).Println(Next)
+	color.New(color.FgGreen, color.Bold).Println(latest)
 
 	return nil
 }
@@ -787,15 +832,10 @@ func run(file string) error {
 }
 
 func genproto() error {
-	output, err := exec.Command("sh", "proto_gen.sh").CombinedOutput()
-	if err != nil {
-		color.New(color.FgRed).Println(string(output))
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader("sh proto_gen.sh"), "")
+	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
-		return err
-
-	}
-
-	return nil
+	return runner.Run(context.TODO(), cmd)
 }
 
 func env(config *configs.Env, filePath string, ext string) {
