@@ -1,5 +1,11 @@
 # Bimalabs Cli
 
+## Requirements
+
+- Go 1.16 or above
+
+- [Delve](https://github.com/go-delve/delve/tree/master/Documentation/installation) for debug
+
 ## Install
 
 - Download latest release from `https://github.com/bimalabs/cli/tags`
