@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net"
 	"net/url"
 	"os"
 	"os/exec"
@@ -39,7 +38,7 @@ import (
 )
 
 var (
-	Version     = "v1.1.6"
+	Version     = "v1.1.7"
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
 
@@ -999,15 +998,7 @@ func create(name string) error {
 }
 
 func debug(pid int) error {
-	l, err := net.Listen("tcp", ":0")
-	if err != nil {
-		return err
-	}
-
-	port := l.Addr().(*net.TCPAddr).Port
-	l.Close()
-
-	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("dlv attach %d --listen=:%d --headless --api-version=2 --log", pid, port)), "")
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("dlv attach %d --listen=:16517 --headless --api-version=2 --log", pid)), "")
 	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
 	return runner.Run(context.TODO(), cmd)
