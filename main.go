@@ -38,9 +38,24 @@ import (
 )
 
 var (
-	Version     = "v1.1.4"
+	Version     = "v1.1.5"
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
+
+	Debug = `{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "debugAdapter":"dlv-dap",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceRoot}/cmd",
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}
+`
 
 	Env = `APP_DEBUG=true
 APP_PORT=7777
@@ -707,9 +722,25 @@ func main() {
 					},
 				},
 				Aliases: []string{"r"},
-				Usage:   "run",
+				Usage:   "run -f config.json",
 				Action: func(*cli.Context) error {
 					return run(file)
+				},
+			},
+			{
+				Name:        "debug",
+				Description: "Launch Go debugger and attached to VS Code",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:        "adapter",
+						Value:       "open",
+						Usage:       "OS launcher, for Linux use xdg-open",
+						Destination: &file,
+					},
+				},
+				Usage: "debug -adapter xdg-open",
+				Action: func(*cli.Context) error {
+					return debug(file)
 				},
 			},
 			{
@@ -948,6 +979,13 @@ func create(name string) error {
 	}
 
 	return nil
+}
+
+func debug(open string) error {
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("%s 'vscode://fabiospampinato.vscode-debug-launcher/launch?args=%s'", open, Debug)), "")
+	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
+
+	return runner.Run(context.TODO(), cmd)
 }
 
 func build(name string) error {

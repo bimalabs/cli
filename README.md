@@ -28,13 +28,15 @@
 
 - `bima update` to update framework and dependencies
 
-- `bima clean` to cleaning dependencies
+- `bima clean` to clean dependencies
 
-- `bima generate` to generating code from protobuff
+- `bima generate` to generate code from protobuff
 
-- `bima run` to running application
+- `bima run` to run application
 
-- `bima build` to building application
+- `bima debug` to debug application (only support VS Code using [Debug Launcher Extension](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-debug-launcher) and [Delve](https://github.com/go-delve/delve/tree/master/Documentation/installation))
+
+- `bima build` to build application
 
 - `bima version` to show framework and cli version
 
