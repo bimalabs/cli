@@ -47,3 +47,7 @@
 - `bima version` to show framework and cli version
 
 - `bima upgrade` to upgrade cli version
+
+## Enable autocomplete terminal
+
+To enable autocomplete feature, refer to [Urfave Cli](https://cli.urfave.org/v2/#enabling)
