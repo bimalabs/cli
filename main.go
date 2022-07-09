@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"net/url"
 	"os"
 	"os/exec"
@@ -38,24 +39,9 @@ import (
 )
 
 var (
-	Version     = "v1.1.5"
+	Version     = "v1.1.6"
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
-
-	Debug = `{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "debugAdapter":"dlv-dap",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceRoot}/cmd",
-            "cwd": "${workspaceRoot}"
-        }
-    ]
-}
-`
 
 	Env = `APP_DEBUG=true
 APP_PORT=7777
@@ -167,12 +153,12 @@ func main() {
 		Commands: []*cli.Command{
 			{
 				Name:    "create",
-				Aliases: []string{"new", "c", "n"},
+				Aliases: []string{"new"},
 				Usage:   "bima create <command>",
 				Subcommands: []*cli.Command{
 					{
-						Name:    "app",
-						Aliases: []string{"project", "skeleton"},
+						Name:    "project",
+						Aliases: []string{"app"},
 						Usage:   "bima create app <name>",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
@@ -206,7 +192,7 @@ func main() {
 					},
 					{
 						Name:    "middleware",
-						Aliases: []string{"mdl", "mid"},
+						Aliases: []string{"mid"},
 						Usage:   "bima create middleware <name>",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
@@ -267,8 +253,9 @@ func main() {
 						},
 					},
 					{
-						Name:  "driver",
-						Usage: "bima create driver <name>",
+						Name:    "driver",
+						Aliases: []string{"dvr"},
+						Usage:   "bima create driver <name>",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -328,8 +315,9 @@ func main() {
 						},
 					},
 					{
-						Name:  "adapter",
-						Usage: "bima create adapter <name>",
+						Name:    "adapter",
+						Aliases: []string{"adp"},
+						Usage:   "bima create adapter <name>",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -390,8 +378,9 @@ func main() {
 						},
 					},
 					{
-						Name:  "route",
-						Usage: "bima create route <name>",
+						Name:    "route",
+						Aliases: []string{"rt"},
+						Usage:   "bima create route <name>",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -456,7 +445,7 @@ func main() {
 			},
 			{
 				Name:    "module",
-				Aliases: []string{"m"},
+				Aliases: []string{"mod"},
 				Usage:   "module <command>",
 				Subcommands: []*cli.Command{
 					{
@@ -469,7 +458,7 @@ func main() {
 								Destination: &file,
 							},
 						},
-						Aliases: []string{"a"},
+						Aliases: []string{"new"},
 						Usage:   "module add <name>",
 						Action: func(cCtx *cli.Context) error {
 							module := cCtx.Args().First()
@@ -536,7 +525,7 @@ func main() {
 					},
 					{
 						Name:    "remove",
-						Aliases: []string{"r"},
+						Aliases: []string{"rm", "rem"},
 						Usage:   "module remove <name>",
 						Action: func(cCtx *cli.Context) error {
 							module := cCtx.Args().First()
@@ -574,7 +563,7 @@ func main() {
 			},
 			{
 				Name:    "dump",
-				Aliases: []string{"d"},
+				Aliases: []string{"dmp"},
 				Usage:   "dump",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
@@ -590,7 +579,7 @@ func main() {
 			},
 			{
 				Name:    "build",
-				Aliases: []string{"install", "b", "i"},
+				Aliases: []string{"install", "compile"},
 				Usage:   "build <name>",
 				Action: func(cCtx *cli.Context) error {
 					name := cCtx.Args().First()
@@ -617,7 +606,7 @@ func main() {
 						return err
 					}
 
-					err := build(name)
+					err := build(name, false)
 					progress.Stop()
 
 					return err
@@ -625,7 +614,7 @@ func main() {
 			},
 			{
 				Name:    "update",
-				Aliases: []string{"u"},
+				Aliases: []string{"upd"},
 				Usage:   "update",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
@@ -652,7 +641,7 @@ func main() {
 			},
 			{
 				Name:    "clean",
-				Aliases: []string{"c"},
+				Aliases: []string{"cln"},
 				Usage:   "clean",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
@@ -679,7 +668,7 @@ func main() {
 			},
 			{
 				Name:    "generate",
-				Aliases: []string{"gen", "genproto", "g"},
+				Aliases: []string{"gen", "genproto"},
 				Usage:   "generate",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
@@ -716,31 +705,59 @@ func main() {
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:        "file",
+						Aliases:     []string{"f"},
 						Value:       ".env",
 						Usage:       "Config file",
 						Destination: &file,
 					},
 				},
-				Aliases: []string{"r"},
-				Usage:   "run -f config.json",
-				Action: func(*cli.Context) error {
+				Aliases: []string{"rn"},
+				Usage:   "run <mode> -f config.json",
+				Action: func(cCtx *cli.Context) error {
+					mode := cCtx.Args().First()
+					if mode == "debug" {
+						progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+						progress.Suffix = " Preparing debug mode... "
+						progress.Start()
+
+						err := build("bima", true)
+						if err != nil {
+							progress.Stop()
+
+							return err
+						}
+
+						progress.Stop()
+
+						cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("./bima run %s", file)), "")
+						runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
+
+						return runner.Run(context.TODO(), cmd)
+					}
+
 					return run(file)
 				},
 			},
 			{
-				Name:        "debug",
-				Description: "Launch Go debugger and attached to VS Code",
-				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:        "adapter",
-						Value:       "open",
-						Usage:       "OS launcher, for Linux use xdg-open",
-						Destination: &file,
-					},
-				},
-				Usage: "debug -adapter xdg-open",
-				Action: func(*cli.Context) error {
-					return debug(file)
+				Name:    "debug",
+				Aliases: []string{"dbg"},
+				Usage:   "debug ",
+				Action: func(cCtx *cli.Context) error {
+					argument := cCtx.Args().First()
+					if argument == "" {
+						fmt.Println("Usage: bima debug <pid>")
+
+						return nil
+					}
+
+					pid, err := strconv.Atoi(argument)
+					if err != nil {
+						color.New(color.FgRed).Println("PID must a number")
+
+						return nil
+					}
+
+					return debug(pid)
 				},
 			},
 			{
@@ -981,14 +998,29 @@ func create(name string) error {
 	return nil
 }
 
-func debug(open string) error {
-	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("%s 'vscode://fabiospampinato.vscode-debug-launcher/launch?args=%s'", open, Debug)), "")
+func debug(pid int) error {
+	l, err := net.Listen("tcp", ":0")
+	if err != nil {
+		return err
+	}
+
+	port := l.Addr().(*net.TCPAddr).Port
+	l.Close()
+
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("dlv attach %d --listen=:%d --headless --api-version=2 --log", pid, port)), "")
 	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
 	return runner.Run(context.TODO(), cmd)
 }
 
-func build(name string) error {
+func build(name string, debug bool) error {
+	if debug {
+		cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("go build -gcflags \"all=-N -l\" -o %s cmd/main.go", name)), "")
+		runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
+
+		return runner.Run(context.TODO(), cmd)
+	}
+
 	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("go build -o %s cmd/main.go", name)), "")
 	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
@@ -1017,7 +1049,7 @@ func update() error {
 }
 
 func run(file string) error {
-	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("go run cmd/main.go %s", file)), "")
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("go run cmd/main.go run %s", file)), "")
 	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
 	return runner.Run(context.TODO(), cmd)

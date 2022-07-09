@@ -32,9 +32,9 @@
 
 - `bima generate` to generate code from protobuff
 
-- `bima run` to run application
+- `bima run <mode> [-f <config>]` to run application
 
-- `bima debug` to debug application (only support VS Code using [Debug Launcher Extension](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-debug-launcher) and [Delve](https://github.com/go-delve/delve/tree/master/Documentation/installation))
+- `bima debug <pid>` to debug application
 
 - `bima build` to build application
 
