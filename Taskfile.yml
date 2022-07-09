@@ -4,9 +4,6 @@ tasks:
         cmds:
             - go build -o bima
             - mv bima /usr/local/bin/bima
-    test:
-        cmds:
-            - go test -coverprofile /tmp/coverage ./... -v
     commit:
         cmds:
             - git commit -am "{{.CLI_ARGS}}"
@@ -15,9 +12,3 @@ tasks:
         cmds:
             - git tag -a {{.CLI_ARGS}} -m "release {{.CLI_ARGS}}"
             - git push origin {{.CLI_ARGS}}
-    clean:
-        cmds:
-            - go mod tidy
-    update:
-        cmds:
-            - go get -u
