@@ -38,7 +38,7 @@ import (
 )
 
 var (
-	Version     = "v1.1.7"
+	Version     = "v1.1.8"
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
 
@@ -803,7 +803,7 @@ func main() {
 			},
 			{
 				Name:    "upgrade",
-				Aliases: []string{"up"},
+				Aliases: []string{"upg"},
 				Usage:   "upgrade",
 				Action: func(*cli.Context) error {
 					return upgrade()
