@@ -6,6 +6,10 @@
 
 - Protoc 3.19.0 or above
 
+- Protoc Gen Go 1.28.0 or above
+
+- Protoc Gen gRpc 1.2.0 or above
+
 - [gRPC Gateway Toolchain](https://github.com/grpc-ecosystem/grpc-gateway)
 
 - [Delve](https://github.com/go-delve/delve/tree/master/Documentation/installation) for debug
