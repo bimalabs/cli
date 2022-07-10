@@ -38,7 +38,7 @@ import (
 )
 
 var (
-	Version     = "v1.1.9"
+	Version     = "v1.1.10"
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
 
@@ -478,6 +478,8 @@ func main() {
 
 							container, err := generator.NewContainer(bima.Generator)
 							if err != nil {
+								color.New(color.FgRed).Println(err.Error())
+
 								return err
 							}
 
@@ -492,17 +494,25 @@ func main() {
 
 							err = register(generator, util, module)
 							if err != nil {
-								color.New(color.FgRed).Println(err)
+								color.New(color.FgRed).Println(err.Error())
+
+								remove(util, module)
+
+								return err
 							}
 
 							if err = genproto(); err != nil {
 								color.New(color.FgRed).Println("Error generate code from proto files")
+
+								remove(util, module)
 
 								return err
 							}
 
 							if err = clean(); err != nil {
 								color.New(color.FgRed).Println("Error cleaning dependencies")
+
+								remove(util, module)
 
 								return err
 							}
@@ -510,11 +520,15 @@ func main() {
 							if err = dump(); err != nil {
 								color.New(color.FgRed).Println("Error update DI container")
 
+								remove(util, module)
+
 								return err
 							}
 
 							if err = clean(); err != nil {
 								color.New(color.FgRed).Println("Error cleaning dependencies")
+
+								remove(util, module)
 
 								return err
 							}
@@ -534,28 +548,7 @@ func main() {
 								return nil
 							}
 
-							if err := dump(); err != nil {
-								color.New(color.FgRed).Println("Error cleaning DI container")
-
-								return err
-							}
-
-							util := color.New(color.FgGreen, color.Bold)
-
-							unregister(util, module)
-							if err := dump(); err != nil {
-								color.New(color.FgRed).Println("Error update DI container")
-
-								return err
-							}
-
-							if err := clean(); err != nil {
-								color.New(color.FgRed).Println("Error cleaning dependencies")
-
-								return err
-							}
-
-							return nil
+							return remove(color.New(color.FgGreen, color.Bold), module)
 						},
 					},
 				},
@@ -850,6 +843,23 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func remove(util *color.Color, module string) error {
+	unregister(util, module)
+	if err := dump(); err != nil {
+		color.New(color.FgRed).Println("Error update DI container")
+
+		return err
+	}
+
+	if err := clean(); err != nil {
+		color.New(color.FgRed).Println("Error cleaning dependencies")
+
+		return err
+	}
+
+	return nil
 }
 
 func upgrade() error {
