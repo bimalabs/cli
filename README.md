@@ -4,15 +4,23 @@
 
 - Go 1.16 or above
 
+- Protoc 3.20.1 or above
+
+- [gRPC Gateway Toolchain](https://github.com/grpc-ecosystem/grpc-gateway)
+
 - [Delve](https://github.com/go-delve/delve/tree/master/Documentation/installation) for debug
 
 ## Install
 
 - Download latest release from `https://github.com/bimalabs/cli/tags`
 
+- Update dependencies using `go mod tidy`
+
 - Extract and build using `go build -o bima`
 
 - Move to your bin folder `sudo mv bima /usr/local/bin/bima`
+
+- Checking toolchain installment `bima makesure`
 
 ## Command List
 
@@ -47,6 +55,8 @@
 - `bima version` to show framework and cli version
 
 - `bima upgrade` to upgrade cli version
+
+- `bima makesure` to install toolchain
 
 ## Enable autocomplete terminal
 

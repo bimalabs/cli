@@ -38,7 +38,7 @@ import (
 )
 
 var (
-	Version     = "v1.1.8"
+	Version     = "v1.1.9"
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
 
@@ -809,6 +809,41 @@ func main() {
 					return upgrade()
 				},
 			},
+			{
+				Name:    "makesure",
+				Aliases: []string{"mks"},
+				Usage:   "makesure",
+				Action: func(ctx *cli.Context) error {
+					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress.Suffix = " Checking toolchain installment... "
+					progress.Start()
+
+					if err := clean(); err != nil {
+						progress.Stop()
+						color.New(color.FgRed).Println("Error cleaning dependencies")
+
+						return err
+					}
+
+					progress.Stop()
+
+					progress = spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress.Suffix = " Try to install/update to latest toolchain... "
+					progress.Start()
+					err := toolchain()
+					if err != nil {
+						progress.Stop()
+						color.New(color.FgRed).Println("Error install toolchain")
+
+						return err
+					}
+
+					progress.Stop()
+					fmt.Println("Toolchain installed")
+
+					return nil
+				},
+			},
 		},
 	}
 
@@ -1027,6 +1062,18 @@ func dump() error {
 
 func clean() error {
 	cmd, _ := syntax.NewParser().Parse(strings.NewReader("go mod tidy"), "")
+	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
+
+	return runner.Run(context.TODO(), cmd)
+}
+
+func toolchain() error {
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader(`go install \
+github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
+github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
+google.golang.org/protobuf/cmd/protoc-gen-go \
+google.golang.org/grpc/cmd/protoc-gen-go-grpc
+`), "")
 	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
 	return runner.Run(context.TODO(), cmd)

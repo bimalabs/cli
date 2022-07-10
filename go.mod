@@ -20,6 +20,7 @@ require (
 require (
 	github.com/briandowns/spinner v1.18.1
 	github.com/creack/pty v1.1.17 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.3
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/urfave/cli/v2 v2.10.3
@@ -28,5 +29,7 @@ require (
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/tools v0.1.11 // indirect
 	google.golang.org/genproto v0.0.0-20220708155623-50e5f4832e73 // indirect
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
+	google.golang.org/protobuf v1.28.0
 	mvdan.cc/sh v2.6.4+incompatible
 )
