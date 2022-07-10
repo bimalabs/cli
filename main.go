@@ -38,7 +38,7 @@ import (
 )
 
 var (
-	Version              = "v1.1.15"
+	Version              = "v1.1.16"
 	ProtocMinVersion     = 31900
 	ProtocGoMinVersion   = 12800
 	ProtocGRpcMinVersion = 10200
@@ -1013,7 +1013,23 @@ func upgrade() error {
 		return err
 	}
 
-	cmd = exec.Command("mv", "bima", fmt.Sprintf("%s/bin/bima", os.Getenv("GOPATH")))
+	binPath := os.Getenv("GOBIN")
+	if binPath == "" {
+		binPath = os.Getenv("GOPATH")
+	}
+
+	if binPath == "" {
+		output, err := exec.Command("which", "go").CombinedOutput()
+		if err != nil {
+			color.New(color.FgRed).Println(string(output))
+
+			return err
+		}
+
+		binPath = filepath.Dir(string(output))
+	}
+
+	cmd = exec.Command("mv", "bima", fmt.Sprintf("%s/bin/bima", binPath))
 	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 	if err != nil {
