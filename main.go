@@ -38,7 +38,7 @@ import (
 )
 
 var (
-	Version     = "v1.1.10"
+	Version     = "v1.1.11"
 	SpinerIndex = 9
 	Duration    = 77 * time.Millisecond
 
@@ -863,14 +863,14 @@ func remove(util *color.Color, module string) error {
 }
 
 func upgrade() error {
-	temp := os.TempDir()
+	temp := strings.TrimSuffix(os.TempDir(), "/")
 	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
 
 	progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
 	progress.Suffix = " Checking new update... "
 	progress.Start()
 
-	wd := fmt.Sprintf("%sbima", temp)
+	wd := fmt.Sprintf("%s/bima", temp)
 	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/cli.git", wd).CombinedOutput()
 	if err != nil {
 		progress.Stop()
