@@ -4,7 +4,7 @@
 
 - Go 1.16 or above
 
-- Protoc 3.20.1 or above
+- Protoc 3.19.0 or above
 
 - [gRPC Gateway Toolchain](https://github.com/grpc-ecosystem/grpc-gateway)
 
