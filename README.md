@@ -52,7 +52,7 @@
 
 - `bima run <mode> [-f <config>]` to run application
 
-- `bima debug <pid>` to debug application
+- `bima debug` to debug application
 
 - `bima build` to build application
 

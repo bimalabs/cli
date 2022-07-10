@@ -3,7 +3,7 @@ tasks:
     install:
         cmds:
             - go build -o bima
-            - mv bima /usr/local/bin/bima
+            - mv bima $GOPATH/bin/bima
     commit:
         cmds:
             - git commit -am "{{.CLI_ARGS}}"

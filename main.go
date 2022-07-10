@@ -38,7 +38,7 @@ import (
 )
 
 var (
-	Version              = "v1.1.14"
+	Version              = "v1.1.15"
 	ProtocMinVersion     = 31900
 	ProtocGoMinVersion   = 12800
 	ProtocGRpcMinVersion = 10200
@@ -736,18 +736,18 @@ func main() {
 			{
 				Name:    "debug",
 				Aliases: []string{"dbg"},
-				Usage:   "debug ",
+				Usage:   "debug",
 				Action: func(cCtx *cli.Context) error {
-					argument := cCtx.Args().First()
-					if argument == "" {
-						fmt.Println("Usage: bima debug <pid>")
+					content, err := os.ReadFile(".pid")
+					if err != nil {
+						color.New(color.FgRed).Println("Application not running")
 
 						return nil
 					}
 
-					pid, err := strconv.Atoi(argument)
+					pid, err := strconv.Atoi(string(content))
 					if err != nil {
-						color.New(color.FgRed).Println("PID must a number")
+						color.New(color.FgRed).Println("Invalid PID")
 
 						return nil
 					}
