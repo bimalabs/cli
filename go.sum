@@ -59,6 +59,8 @@ github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+Ce
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
 github.com/bimalabs/framework/v4 v4.0.11 h1:4egLD3Ms0x2tqsN2H6ZdbAxs8ZqKiGaLVFU+vg0wP3E=
 github.com/bimalabs/framework/v4 v4.0.11/go.mod h1:dT2pSvpi3L9VSmBGKyL5pYJvebpjBN5ihcTLfyt1R5o=
+github.com/bimalabs/framework/v4 v4.1.0 h1:2xy7KGzefFJdsqvJR8KFiVd0ArE3Qt3P5+h+ZUnqxHE=
+github.com/bimalabs/framework/v4 v4.1.0/go.mod h1:imC8BfxLatZnBoYJjFGlG8sMXOHDvioH1J+ZBX48Acg=
 github.com/briandowns/spinner v1.18.1 h1:yhQmQtM1zsqFsouh09Bk/jCjd50pC3EOGsh28gLVvwY=
 github.com/briandowns/spinner v1.18.1/go.mod h1:mQak9GHqbspjC/5iUx3qMlIho8xBS/ppAL/hX5SmPJU=
 github.com/cenkalti/backoff/v3 v3.0.0/go.mod h1:cIeZDE3IrqwwJl6VUwCN6trj1oXrTS4rc0ij+ULvLYs=
