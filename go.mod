@@ -20,11 +20,9 @@ require (
 require (
 	github.com/briandowns/spinner v1.18.1
 	github.com/creack/pty v1.1.17 // indirect
-	github.com/goddtriffin/helmet v1.0.2 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.3
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
-	github.com/rs/cors v1.8.2 // indirect
 	github.com/urfave/cli/v2 v2.10.3
 	golang.org/x/net v0.0.0-20220708220712-1185a9018129 // indirect
 	golang.org/x/sys v0.0.0-20220708085239-5a0f0661e09d // indirect
