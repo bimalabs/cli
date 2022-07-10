@@ -22,7 +22,7 @@
 
 - Extract and build using `go build -o bima`
 
-- Move to your bin folder `sudo mv bima /usr/local/bin/bima`
+- Move to your bin folder `mv bima $GOPATH/bin/bima`
 
 - Checking toolchain installment `bima makesure`
 

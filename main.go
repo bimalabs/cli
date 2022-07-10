@@ -1013,7 +1013,7 @@ func upgrade() error {
 		return err
 	}
 
-	cmd = exec.Command("mv", "bima", "/usr/local/bin/bima")
+	cmd = exec.Command("mv", "bima", fmt.Sprintf("%s/bin/bima", os.Getenv("GOPATH")))
 	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 	if err != nil {
