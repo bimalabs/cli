@@ -38,9 +38,12 @@ import (
 )
 
 var (
-	Version     = "v1.1.11"
-	SpinerIndex = 9
-	Duration    = 77 * time.Millisecond
+	Version              = "v1.1.12"
+	ProtocMinVersion     = 31900
+	ProtocGoMinVersion   = 12800
+	ProtocGRpcMinVersion = 10200
+	SpinerIndex          = 9
+	Duration             = 77 * time.Millisecond
 
 	Env = `APP_DEBUG=true
 APP_PORT=7777
@@ -818,12 +821,59 @@ func main() {
 						return err
 					}
 
+					protocVersion := 0
+					output, err := exec.Command("protoc", "--version").CombinedOutput()
+					vSlice := strings.Split(string(output), " ")
+					if len(vSlice) > 1 {
+						vSlice = strings.Split(vSlice[1], ".")
+						if len(vSlice) > 2 {
+							major, _ := strconv.Atoi(vSlice[0])
+							minor, _ := strconv.Atoi(vSlice[1])
+							fix, _ := strconv.Atoi(vSlice[2])
+							protocVersion = (10_000 * major) + (100 * minor) + fix
+						}
+					}
+
+					protocGoVersion := 0
+					output, err = exec.Command("protoc-gen-go", "--version").CombinedOutput()
+					vSlice = strings.Split(string(output), " ")
+					if len(vSlice) > 1 {
+						vSlice[1] = strings.TrimPrefix(vSlice[1], "v")
+						vSlice = strings.Split(vSlice[1], ".")
+						if len(vSlice) > 2 {
+							major, _ := strconv.Atoi(vSlice[0])
+							minor, _ := strconv.Atoi(vSlice[1])
+							fix, _ := strconv.Atoi(vSlice[2])
+							protocGoVersion = (10_000 * major) + (100 * minor) + fix
+						}
+					}
+
+					protocGRpcVersion := 0
+					output, err = exec.Command("protoc-gen-go-grpc", "--version").CombinedOutput()
+					vSlice = strings.Split(string(output), " ")
+					if len(vSlice) > 1 {
+						vSlice = strings.Split(vSlice[1], ".")
+						if len(vSlice) > 2 {
+							major, _ := strconv.Atoi(vSlice[0])
+							minor, _ := strconv.Atoi(vSlice[1])
+							fix, _ := strconv.Atoi(vSlice[2])
+							protocGRpcVersion = (10_000 * major) + (100 * minor) + fix
+						}
+					}
+
+					if protocVersion >= ProtocMinVersion && protocGoVersion >= ProtocGoMinVersion && protocGRpcVersion >= ProtocGRpcMinVersion {
+						progress.Stop()
+						color.New(color.FgGreen).Println("Toolchain is already installed")
+
+						return nil
+					}
+
 					progress.Stop()
 
 					progress = spinner.New(spinner.CharSets[SpinerIndex], Duration)
 					progress.Suffix = " Try to install/update to latest toolchain... "
 					progress.Start()
-					err := toolchain()
+					err = toolchain()
 					if err != nil {
 						progress.Stop()
 						color.New(color.FgRed).Println("Error install toolchain")
@@ -832,7 +882,7 @@ func main() {
 					}
 
 					progress.Stop()
-					fmt.Println("Toolchain installed")
+					color.New(color.FgGreen).Println("Toolchain installed")
 
 					return nil
 				},
