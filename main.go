@@ -40,9 +40,10 @@ func main() {
 				Usage:   "bima create <command>",
 				Subcommands: []*cli.Command{
 					{
-						Name:    "project",
-						Aliases: []string{"app"},
-						Usage:   "bima create app <name>",
+						Name:        "project",
+						Aliases:     []string{"app"},
+						Usage:       "bima create app <name>",
+						Description: "Create new application or project",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -55,9 +56,10 @@ func main() {
 						},
 					},
 					{
-						Name:    "middleware",
-						Aliases: []string{"mid"},
-						Usage:   "bima create middleware <name>",
+						Name:        "middleware",
+						Aliases:     []string{"mid"},
+						Usage:       "bima create middleware <name>",
+						Description: "Create new middleware",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -70,9 +72,10 @@ func main() {
 						},
 					},
 					{
-						Name:    "driver",
-						Aliases: []string{"dvr"},
-						Usage:   "bima create driver <name>",
+						Name:        "driver",
+						Aliases:     []string{"dvr"},
+						Usage:       "bima create driver <name>",
+						Description: "Create new driver",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -85,9 +88,10 @@ func main() {
 						},
 					},
 					{
-						Name:    "adapter",
-						Aliases: []string{"adp"},
-						Usage:   "bima create adapter <name>",
+						Name:        "adapter",
+						Aliases:     []string{"adp"},
+						Usage:       "bima create adapter <name>",
+						Description: "Create new adapter",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -100,9 +104,10 @@ func main() {
 						},
 					},
 					{
-						Name:    "route",
-						Aliases: []string{"rt"},
-						Usage:   "bima create route <name>",
+						Name:        "route",
+						Aliases:     []string{"rt"},
+						Usage:       "bima create route <name>",
+						Description: "Create new route",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -132,8 +137,9 @@ func main() {
 								Destination: &file,
 							},
 						},
-						Aliases: []string{"new"},
-						Usage:   "module add <name>",
+						Aliases:     []string{"new"},
+						Usage:       "module add <name> [<version> -c <config>]",
+						Description: "Create new module <name> with <version> using <config> file",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -151,9 +157,10 @@ func main() {
 						},
 					},
 					{
-						Name:    "remove",
-						Aliases: []string{"rm", "rem"},
-						Usage:   "module remove <name>",
+						Name:        "remove",
+						Aliases:     []string{"rm", "rem"},
+						Usage:       "module remove <name>",
+						Description: "Remove module <name>",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
