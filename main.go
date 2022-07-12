@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.2.1"
+	version              = "v1.2.2"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -175,9 +175,10 @@ func main() {
 				},
 			},
 			{
-				Name:    "dump",
-				Aliases: []string{"dmp"},
-				Usage:   "dump",
+				Name:        "dump",
+				Aliases:     []string{"dmp"},
+				Usage:       "dump",
+				Description: "Generate service container",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Generate service container... "
@@ -191,9 +192,10 @@ func main() {
 				},
 			},
 			{
-				Name:    "build",
-				Aliases: []string{"install", "compile"},
-				Usage:   "build <name>",
+				Name:        "build",
+				Aliases:     []string{"install", "compile"},
+				Usage:       "build <name>",
+				Description: "Build application to binary",
 				Action: func(cCtx *cli.Context) error {
 					name := cCtx.Args().First()
 					if name == "" {
@@ -226,9 +228,10 @@ func main() {
 				},
 			},
 			{
-				Name:    "update",
-				Aliases: []string{"upd"},
-				Usage:   "update",
+				Name:        "update",
+				Aliases:     []string{"upd"},
+				Usage:       "update",
+				Description: "Update project dependencies",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Updating dependencies... "
@@ -253,9 +256,10 @@ func main() {
 				},
 			},
 			{
-				Name:    "clean",
-				Aliases: []string{"cln"},
-				Usage:   "clean",
+				Name:        "clean",
+				Aliases:     []string{"cln"},
+				Usage:       "clean",
+				Description: "Cleaning project dependencies",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Cleaning dependencies... "
@@ -280,9 +284,10 @@ func main() {
 				},
 			},
 			{
-				Name:    "generate",
-				Aliases: []string{"gen", "genproto"},
-				Usage:   "generate",
+				Name:        "generate",
+				Aliases:     []string{"gen", "genproto"},
+				Usage:       "generate",
+				Description: "Generate code from protobuf file(s)",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Generating protobuff... "
@@ -324,8 +329,9 @@ func main() {
 						Destination: &file,
 					},
 				},
-				Aliases: []string{"rn"},
-				Usage:   "run <mode> [-c <config>]",
+				Aliases:     []string{"rn"},
+				Usage:       "run <mode> [-c <config>]",
+				Description: "Run application using <config> file",
 				Action: func(cCtx *cli.Context) error {
 					mode := cCtx.Args().First()
 					if mode == "debug" {
@@ -352,9 +358,10 @@ func main() {
 				},
 			},
 			{
-				Name:    "debug",
-				Aliases: []string{"dbg"},
-				Usage:   "debug",
+				Name:        "debug",
+				Aliases:     []string{"dbg"},
+				Usage:       "debug",
+				Description: "Debug application",
 				Action: func(cCtx *cli.Context) error {
 					content, err := os.ReadFile(".pid")
 					if err != nil {
@@ -374,9 +381,10 @@ func main() {
 				},
 			},
 			{
-				Name:    "version",
-				Aliases: []string{"v"},
-				Usage:   "version",
+				Name:        "version",
+				Aliases:     []string{"v"},
+				Usage:       "version",
+				Description: "Show Bima Cli version and Framework",
 				Action: func(*cli.Context) error {
 					wd, _ := os.Getwd()
 					var path strings.Builder
@@ -416,17 +424,19 @@ func main() {
 				},
 			},
 			{
-				Name:    "upgrade",
-				Aliases: []string{"upg"},
-				Usage:   "upgrade",
+				Name:        "upgrade",
+				Aliases:     []string{"upg"},
+				Usage:       "upgrade",
+				Description: "Upgrade Bima Cli to latest version",
 				Action: func(*cli.Context) error {
 					return tool.Call("upgrade", version)
 				},
 			},
 			{
-				Name:    "makesure",
-				Aliases: []string{"mks"},
-				Usage:   "makesure",
+				Name:        "makesure",
+				Aliases:     []string{"mks"},
+				Usage:       "makesure",
+				Description: "Check and install toolchain",
 				Action: func(ctx *cli.Context) error {
 					return tool.Call("makesure", protocMinVersion, protocGoMinVersion, protocGRpcMinVersion)
 				},

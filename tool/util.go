@@ -19,6 +19,8 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/joho/godotenv"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"gopkg.in/yaml.v2"
 	"mvdan.cc/sh/interp"
 	"mvdan.cc/sh/syntax"
@@ -35,12 +37,8 @@ func Call(name string, args ...interface{}) error {
 		in[k] = reflect.ValueOf(v)
 	}
 
-	if len(in) == 0 {
-
-	}
-
 	c := util(name)
-	returns := reflect.ValueOf(c).MethodByName(strings.Title(string(c))).Call(in)
+	returns := reflect.ValueOf(c).MethodByName(cases.Title(language.English).String(string(c))).Call(in)
 	if len(returns) > 1 {
 		return nil
 	}
@@ -92,6 +90,13 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 
 	protocVersion := 0
 	output, err := exec.Command("protoc", "--version").CombinedOutput()
+	if err != nil {
+		progress.Stop()
+		color.New(color.FgRed).Println("Protoc is not installed")
+
+		return err
+	}
+
 	vSlice := strings.Split(string(output), " ")
 	if len(vSlice) > 1 {
 		vSlice = strings.Split(vSlice[1], ".")
@@ -105,6 +110,13 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 
 	protocGoVersion := 0
 	output, err = exec.Command("protoc-gen-go", "--version").CombinedOutput()
+	if err != nil {
+		progress.Stop()
+		color.New(color.FgRed).Println("Protoc Gen Go is not installed")
+
+		return err
+	}
+
 	vSlice = strings.Split(string(output), " ")
 	if len(vSlice) > 1 {
 		vSlice[1] = strings.TrimPrefix(vSlice[1], "v")
@@ -119,6 +131,13 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 
 	protocGRpcVersion := 0
 	output, err = exec.Command("protoc-gen-go-grpc", "--version").CombinedOutput()
+	if err != nil {
+		progress.Stop()
+		color.New(color.FgRed).Println("Protoc Gen Go gRPC is not installed")
+
+		return err
+	}
+
 	vSlice = strings.Split(string(output), " ")
 	if len(vSlice) > 1 {
 		vSlice = strings.Split(vSlice[1], ".")
@@ -180,8 +199,16 @@ func (u util) Upgrade(version string) error {
 		latest string
 		when   = time.Now().AddDate(-3, 0, 0)
 	)
+
 	tags, err := repository.TagObjects()
-	tags.ForEach(func(t *object.Tag) error {
+	if err != nil {
+		progress.Stop()
+		color.New(color.FgRed).Println(err)
+
+		return nil
+	}
+
+	_ = tags.ForEach(func(t *object.Tag) error {
 		if when.Before(t.Tagger.When) {
 			when = t.Tagger.When
 			latest = t.Name
@@ -225,11 +252,11 @@ func (u util) Upgrade(version string) error {
 
 	cmd = exec.Command("go", "get")
 	cmd.Dir = wd
-	cmd.Run()
+	_ = cmd.Run()
 
 	cmd = exec.Command("go", "mod", "tidy")
 	cmd.Dir = wd
-	cmd.Run()
+	_ = cmd.Run()
 
 	cmd = exec.Command("go", "run", "dumper/main.go")
 	cmd.Dir = wd
@@ -338,7 +365,7 @@ func (u util) toolchain() error {
 func config(config *configs.Env, filePath string, ext string) {
 	switch ext {
 	case ".env":
-		godotenv.Load()
+		_ = godotenv.Load()
 		parse(config)
 	case ".yaml":
 		content, err := os.ReadFile(filePath)

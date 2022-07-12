@@ -11,6 +11,8 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -133,7 +135,7 @@ func (a App) Create() error {
 	err := createApp(string(a))
 	if err == nil {
 		progress.Stop()
-		fmt.Printf("%s application created\n", color.New(color.FgGreen).Sprint(strings.Title(string(a))))
+		fmt.Printf("%s application created\n", color.New(color.FgGreen).Sprint(cases.Title(language.English).String(string(a))))
 
 		util := color.New(color.Bold)
 
@@ -175,7 +177,7 @@ func (m Middleware) Create() error {
 		return err
 	}
 
-	name := strings.Title(string(m))
+	name := cases.Title(language.English).String(string(m))
 	_, err = f.WriteString(fmt.Sprintf(middleware, name, name, name))
 	if err != nil {
 		progress.Stop()
@@ -183,8 +185,8 @@ func (m Middleware) Create() error {
 		return err
 	}
 
-	f.Sync()
-	f.Close()
+	_ = f.Sync()
+	_ = f.Close()
 
 	if err := Call("clean"); err != nil {
 		progress.Stop()
@@ -226,7 +228,7 @@ func (d Driver) Create() error {
 		return err
 	}
 
-	name := strings.Title(string(d))
+	name := cases.Title(language.English).String(string(d))
 	_, err = f.WriteString(fmt.Sprintf(driver, name, name, name))
 	if err != nil {
 		progress.Stop()
@@ -234,8 +236,8 @@ func (d Driver) Create() error {
 		return err
 	}
 
-	f.Sync()
-	f.Close()
+	_ = f.Sync()
+	_ = f.Close()
 
 	if err := Call("clean"); err != nil {
 		progress.Stop()
@@ -277,7 +279,7 @@ func (a Adapter) Create() error {
 		return err
 	}
 
-	name := strings.Title(string(a))
+	name := cases.Title(language.English).String(string(a))
 	_, err = f.WriteString(fmt.Sprintf(adapter, name, name))
 	if err != nil {
 		progress.Stop()
@@ -285,8 +287,8 @@ func (a Adapter) Create() error {
 		return err
 	}
 
-	f.Sync()
-	f.Close()
+	_ = f.Sync()
+	_ = f.Close()
 
 	if err := Call("clean"); err != nil {
 		progress.Stop()
@@ -330,7 +332,7 @@ func (r Route) Create() error {
 		return err
 	}
 
-	name := strings.Title(string(r))
+	name := cases.Title(language.English).String(string(r))
 	_, err = f.WriteString(fmt.Sprintf(route, name, name, lName, name, name, name, name))
 	if err != nil {
 		progress.Stop()
@@ -338,8 +340,8 @@ func (r Route) Create() error {
 		return err
 	}
 
-	f.Sync()
-	f.Close()
+	_ = f.Sync()
+	_ = f.Close()
 
 	if err := Call("clean"); err != nil {
 		progress.Stop()
@@ -387,14 +389,14 @@ func createApp(name string) error {
 		return err
 	}
 
-	f.Sync()
-	f.Close()
+	_ = f.Sync()
+	_ = f.Close()
 
 	wd, _ := os.Getwd()
 
 	cmd := exec.Command("go", "get")
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
-	cmd.Run()
+	_ = cmd.Run()
 
 	cmd = exec.Command("go", "run", "dumper/main.go")
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)

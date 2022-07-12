@@ -24,6 +24,8 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/vito/go-interact/interact"
 	"golang.org/x/mod/modfile"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type Module string
@@ -53,35 +55,35 @@ func (m Module) Create(file string, version string) error {
 	err = create(generator, termColor, string(m))
 	if err != nil {
 		color.New(color.FgRed).Println(err.Error())
-		m.Remove()
+		_ = m.Remove()
 
 		return err
 	}
 
 	if err = Call("genproto"); err != nil {
 		color.New(color.FgRed).Println("Error generate code from proto files")
-		m.Remove()
+		_ = m.Remove()
 
 		return err
 	}
 
 	if err = Call("clean"); err != nil {
 		color.New(color.FgRed).Println("Error cleaning dependencies")
-		m.Remove()
+		_ = m.Remove()
 
 		return err
 	}
 
 	if err = Call("dump"); err != nil {
 		color.New(color.FgRed).Println("Error update DI container")
-		m.Remove()
+		_ = m.Remove()
 
 		return err
 	}
 
 	if err = Call("clean"); err != nil {
 		color.New(color.FgRed).Println("Error cleaning dependencies")
-		m.Remove()
+		_ = m.Remove()
 
 		return err
 	}
@@ -137,7 +139,7 @@ func remove(module string) {
 	file, _ := os.ReadFile(jsonModules)
 	modulesJson := []generators.ModuleJson{}
 	registered := modulesJson
-	json.Unmarshal(file, &modulesJson)
+	_ = json.Unmarshal(file, &modulesJson)
 	for _, v := range modulesJson {
 		if v.Name != moduleName {
 			mUrl, _ := url.Parse(v.Url)
@@ -151,7 +153,7 @@ func remove(module string) {
 	}
 
 	registeredByte, _ := json.Marshal(registered)
-	os.WriteFile(jsonModules, registeredByte, 0644)
+	_ = os.WriteFile(jsonModules, registeredByte, 0644)
 
 	packageName := modfile.ModulePath(mod)
 	yaml := fmt.Sprintf("%s/configs/modules.yaml", workDir)
@@ -164,13 +166,13 @@ func remove(module string) {
 
 	modRegex := regexp.MustCompile(fmt.Sprintf("(?m)[\r\n]+^.*module:%s.*$", moduleUnderscore))
 	modules = modRegex.ReplaceAllString(modules, "")
-	os.WriteFile(yaml, []byte(modules), 0644)
+	_ = os.WriteFile(yaml, []byte(modules), 0644)
 
 	regex := regexp.MustCompile(fmt.Sprintf("(?m)[\r\n]+^.*%s.*$", fmt.Sprintf("%s/%s", packageName, modulePlural)))
 	codeblock = regex.ReplaceAllString(codeblock, "")
 
 	codeblock = modRegex.ReplaceAllString(codeblock, "")
-	os.WriteFile(provider, []byte(codeblock), 0644)
+	_ = os.WriteFile(provider, []byte(codeblock), 0644)
 
 	os.RemoveAll(fmt.Sprintf("%s/%s", workDir, modulePlural))
 	os.Remove(fmt.Sprintf("%s/protos/%s.proto", workDir, moduleUnderscore))
@@ -208,10 +210,10 @@ func create(generator *generators.Factory, util *color.Color, name string) error
 			field.Name = strings.Replace(field.Name, " ", "", -1)
 			column := generators.FieldTemplate{}
 
-			copier.Copy(&column, field)
+			_ = copier.Copy(&column, field)
 
 			column.Index = index
-			column.Name = strings.Title(column.Name)
+			column.Name = cases.Title(language.English).String(column.Name)
 			column.NameUnderScore = strcase.ToDelimited(column.Name, '_')
 			module.Fields = append(module.Fields, &column)
 
