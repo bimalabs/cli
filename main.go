@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.2.2"
+	version              = "v1.2.3"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -392,10 +392,10 @@ func main() {
 					path.WriteString(wd)
 					path.WriteString("/go.mod")
 
-					version := "unknown"
+					framework := "unknown"
 					mod, err := os.ReadFile(path.String())
 					if err != nil {
-						fmt.Printf("Framework: %s\n", version)
+						fmt.Printf("Framework: %s\n", framework)
 						fmt.Printf("Cli: %s\n", version)
 
 						return nil
@@ -403,7 +403,7 @@ func main() {
 
 					f, err := modfile.Parse(path.String(), mod, nil)
 					if err != nil {
-						fmt.Printf("Framework: %s\n", version)
+						fmt.Printf("Framework: %s\n", framework)
 						fmt.Printf("Cli: %s\n", version)
 
 						return nil
@@ -417,7 +417,7 @@ func main() {
 						}
 					}
 
-					fmt.Printf("Framework: %s\n", version)
+					fmt.Printf("Framework: %s\n", framework)
 					fmt.Printf("Cli: %s\n", version)
 
 					return nil
