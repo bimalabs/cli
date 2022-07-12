@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.2.3"
+	version              = "v1.2.4"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -411,7 +411,7 @@ func main() {
 
 					for _, v := range f.Require {
 						if v.Mod.Path == "github.com/bimalabs/framework/v4" {
-							version = v.Mod.Version
+							framework = v.Mod.Version
 
 							break
 						}
