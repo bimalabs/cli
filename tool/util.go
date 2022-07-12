@@ -9,13 +9,15 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
-	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bimalabs/framework/v4/configs"
 	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v2"
 	"mvdan.cc/sh/interp"
@@ -28,7 +30,6 @@ type (
 )
 
 func Call(name string, args ...interface{}) error {
-
 	in := make([]reflect.Value, len(args))
 	for k, v := range args {
 		in[k] = reflect.ValueOf(v)
@@ -164,27 +165,31 @@ func (u util) Upgrade(version string) error {
 	progress.Start()
 
 	wd := fmt.Sprintf("%s/bima", temp)
-	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/cli.git", wd).CombinedOutput()
+	repository, err := git.PlainClone(wd, false, &git.CloneOptions{
+		URL:   "https://github.com/bimalabs/cli.git",
+		Depth: 1,
+	})
 	if err != nil {
 		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
+		color.New(color.FgRed).Println(err)
 
 		return nil
 	}
 
-	cmd := exec.Command("git", "rev-list", "--tags", "--max-count=1")
-	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
+	var (
+		latest string
+		when   = time.Now().AddDate(-3, 0, 0)
+	)
+	tags, err := repository.TagObjects()
+	tags.ForEach(func(t *object.Tag) error {
+		if when.Before(t.Tagger.When) {
+			when = t.Tagger.When
+			latest = t.Name
+		}
 
-	re := regexp.MustCompile(`\r?\n`)
-	commitId := re.ReplaceAllString(string(output), "")
+		return nil
+	})
 
-	cmd = exec.Command("git", "describe", "--tags", commitId)
-	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
-
-	re = regexp.MustCompile(`\r?\n`)
-	latest := re.ReplaceAllString(string(output), "")
 	if latest == version {
 		progress.Stop()
 		color.New(color.FgGreen).Println("Bima Cli is already up to date")
@@ -198,12 +203,12 @@ func (u util) Upgrade(version string) error {
 	progress.Suffix = " Updating Bima Cli... "
 	progress.Start()
 
-	cmd = exec.Command("git", "fetch")
+	cmd := exec.Command("git", "fetch")
 	cmd.Dir = wd
 	err = cmd.Run()
 	if err != nil {
 		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
+		color.New(color.FgRed).Println("Error fetch repository")
 
 		return nil
 	}
@@ -213,7 +218,7 @@ func (u util) Upgrade(version string) error {
 	err = cmd.Run()
 	if err != nil {
 		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
+		color.New(color.FgRed).Println("Error checkout to latest tag")
 
 		return nil
 	}
@@ -228,7 +233,7 @@ func (u util) Upgrade(version string) error {
 
 	cmd = exec.Command("go", "run", "dumper/main.go")
 	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		progress.Stop()
 		color.New(color.FgRed).Println(string(output))

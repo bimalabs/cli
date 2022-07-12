@@ -9,7 +9,7 @@
             "mode": "auto",
             "program": "${workspaceRoot}",
             "args": [
-                "makesure"
+                "upgrade"
             ],
             "cwd": "${workspaceRoot}"
         }
