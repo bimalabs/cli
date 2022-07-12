@@ -38,7 +38,7 @@
 
 - `bima create adapter <name>` to create pagination adapter under `adapters` folder
 
-- `bima module add <name>` to add new module
+- `bima module add <name> [<version> -c <config>]` to add new module with `version` using `config` file
 
 - `bima module remove <name>` to remove module
 
@@ -50,7 +50,7 @@
 
 - `bima generate` to generate code from protobuff
 
-- `bima run <mode> [-f <config>]` to run application
+- `bima run <mode> [-c <config>]` to run application using `config` file
 
 - `bima debug` to debug application
 
