@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
-	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -22,12 +19,12 @@ import (
 )
 
 var (
-	Version              = "v1.1.17"
-	ProtocMinVersion     = 31900
-	ProtocGoMinVersion   = 12800
-	ProtocGRpcMinVersion = 10200
-	SpinerIndex          = 9
-	Duration             = 77 * time.Millisecond
+	version              = "v1.2.0"
+	protocMinVersion     = 31900
+	protocGoMinVersion   = 12800
+	protocGRpcMinVersion = 10200
+	spinerIndex          = 9
+	duration             = 77 * time.Millisecond
 )
 
 func main() {
@@ -140,7 +137,7 @@ func main() {
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
-								fmt.Println("Usage: bima module add <name> [<version>]")
+								fmt.Println("Usage: bima module add <name> [<version> -c <config>]")
 
 								return nil
 							}
@@ -175,7 +172,7 @@ func main() {
 				Aliases: []string{"dmp"},
 				Usage:   "dump",
 				Action: func(*cli.Context) error {
-					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Generate service container... "
 					progress.Start()
 					time.Sleep(1 * time.Second)
@@ -198,7 +195,7 @@ func main() {
 						return nil
 					}
 
-					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Bundling application... "
 					progress.Start()
 					if err := tool.Call("clean"); err != nil {
@@ -226,7 +223,7 @@ func main() {
 				Aliases: []string{"upd"},
 				Usage:   "update",
 				Action: func(*cli.Context) error {
-					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Updating dependencies... "
 					progress.Start()
 					if err := tool.Call("update"); err != nil {
@@ -253,7 +250,7 @@ func main() {
 				Aliases: []string{"cln"},
 				Usage:   "clean",
 				Action: func(*cli.Context) error {
-					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Cleaning dependencies... "
 					progress.Start()
 					if err := tool.Call("clean"); err != nil {
@@ -280,7 +277,7 @@ func main() {
 				Aliases: []string{"gen", "genproto"},
 				Usage:   "generate",
 				Action: func(*cli.Context) error {
-					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Generating protobuff... "
 					progress.Start()
 					if err := tool.Call("genproto"); err != nil {
@@ -321,11 +318,11 @@ func main() {
 					},
 				},
 				Aliases: []string{"rn"},
-				Usage:   "run <mode> -f config.json",
+				Usage:   "run <mode> [-c <config>]",
 				Action: func(cCtx *cli.Context) error {
 					mode := cCtx.Args().First()
 					if mode == "debug" {
-						progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
+						progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 						progress.Suffix = " Preparing debug mode... "
 						progress.Start()
 
@@ -384,7 +381,7 @@ func main() {
 					mod, err := os.ReadFile(path.String())
 					if err != nil {
 						fmt.Printf("Framework: %s\n", version)
-						fmt.Printf("Cli: %s\n", Version)
+						fmt.Printf("Cli: %s\n", version)
 
 						return nil
 					}
@@ -392,7 +389,7 @@ func main() {
 					f, err := modfile.Parse(path.String(), mod, nil)
 					if err != nil {
 						fmt.Printf("Framework: %s\n", version)
-						fmt.Printf("Cli: %s\n", Version)
+						fmt.Printf("Cli: %s\n", version)
 
 						return nil
 					}
@@ -406,7 +403,7 @@ func main() {
 					}
 
 					fmt.Printf("Framework: %s\n", version)
-					fmt.Printf("Cli: %s\n", Version)
+					fmt.Printf("Cli: %s\n", version)
 
 					return nil
 				},
@@ -416,7 +413,7 @@ func main() {
 				Aliases: []string{"upg"},
 				Usage:   "upgrade",
 				Action: func(*cli.Context) error {
-					return upgrade()
+					return tool.Call("upgrade", version)
 				},
 			},
 			{
@@ -424,81 +421,7 @@ func main() {
 				Aliases: []string{"mks"},
 				Usage:   "makesure",
 				Action: func(ctx *cli.Context) error {
-					progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-					progress.Suffix = " Checking toolchain installment... "
-					progress.Start()
-
-					if err := tool.Call("clean"); err != nil {
-						progress.Stop()
-						color.New(color.FgRed).Println("Error cleaning dependencies")
-
-						return err
-					}
-
-					protocVersion := 0
-					output, err := exec.Command("protoc", "--version").CombinedOutput()
-					vSlice := strings.Split(string(output), " ")
-					if len(vSlice) > 1 {
-						vSlice = strings.Split(vSlice[1], ".")
-						if len(vSlice) > 2 {
-							major, _ := strconv.Atoi(vSlice[0])
-							minor, _ := strconv.Atoi(vSlice[1])
-							fix, _ := strconv.Atoi(vSlice[2])
-							protocVersion = (10_000 * major) + (100 * minor) + fix
-						}
-					}
-
-					protocGoVersion := 0
-					output, err = exec.Command("protoc-gen-go", "--version").CombinedOutput()
-					vSlice = strings.Split(string(output), " ")
-					if len(vSlice) > 1 {
-						vSlice[1] = strings.TrimPrefix(vSlice[1], "v")
-						vSlice = strings.Split(vSlice[1], ".")
-						if len(vSlice) > 2 {
-							major, _ := strconv.Atoi(vSlice[0])
-							minor, _ := strconv.Atoi(vSlice[1])
-							fix, _ := strconv.Atoi(vSlice[2])
-							protocGoVersion = (10_000 * major) + (100 * minor) + fix
-						}
-					}
-
-					protocGRpcVersion := 0
-					output, err = exec.Command("protoc-gen-go-grpc", "--version").CombinedOutput()
-					vSlice = strings.Split(string(output), " ")
-					if len(vSlice) > 1 {
-						vSlice = strings.Split(vSlice[1], ".")
-						if len(vSlice) > 2 {
-							major, _ := strconv.Atoi(vSlice[0])
-							minor, _ := strconv.Atoi(vSlice[1])
-							fix, _ := strconv.Atoi(vSlice[2])
-							protocGRpcVersion = (10_000 * major) + (100 * minor) + fix
-						}
-					}
-
-					if protocVersion >= ProtocMinVersion && protocGoVersion >= ProtocGoMinVersion && protocGRpcVersion >= ProtocGRpcMinVersion {
-						progress.Stop()
-						color.New(color.FgGreen).Println("Toolchain is already installed")
-
-						return nil
-					}
-
-					progress.Stop()
-
-					progress = spinner.New(spinner.CharSets[SpinerIndex], Duration)
-					progress.Suffix = " Try to install/update to latest toolchain... "
-					progress.Start()
-					err = tool.Call("toolchain")
-					if err != nil {
-						progress.Stop()
-						color.New(color.FgRed).Println("Error install toolchain")
-
-						return err
-					}
-
-					progress.Stop()
-					color.New(color.FgGreen).Println("Toolchain installed")
-
-					return nil
+					return tool.Call("makesure", protocMinVersion, protocGoMinVersion, protocGRpcMinVersion)
 				},
 			},
 		},
@@ -507,138 +430,4 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func upgrade() error {
-	temp := strings.TrimSuffix(os.TempDir(), "/")
-	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
-
-	progress := spinner.New(spinner.CharSets[SpinerIndex], Duration)
-	progress.Suffix = " Checking new update... "
-	progress.Start()
-
-	wd := fmt.Sprintf("%s/bima", temp)
-	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/cli.git", wd).CombinedOutput()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
-
-		return nil
-	}
-
-	cmd := exec.Command("git", "rev-list", "--tags", "--max-count=1")
-	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
-
-	re := regexp.MustCompile(`\r?\n`)
-	commitId := re.ReplaceAllString(string(output), "")
-
-	cmd = exec.Command("git", "describe", "--tags", commitId)
-	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
-
-	re = regexp.MustCompile(`\r?\n`)
-	latest := re.ReplaceAllString(string(output), "")
-	if latest == Version {
-		progress.Stop()
-		color.New(color.FgGreen).Println("Bima Cli is already up to date")
-
-		return nil
-	}
-
-	progress.Stop()
-
-	progress = spinner.New(spinner.CharSets[SpinerIndex], Duration)
-	progress.Suffix = " Updating Bima Cli... "
-	progress.Start()
-
-	cmd = exec.Command("git", "fetch")
-	cmd.Dir = wd
-	err = cmd.Run()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
-
-		return nil
-	}
-
-	cmd = exec.Command("git", "checkout", latest)
-	cmd.Dir = wd
-	err = cmd.Run()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
-
-		return nil
-	}
-
-	cmd = exec.Command("go", "get")
-	cmd.Dir = wd
-	cmd.Run()
-
-	cmd = exec.Command("go", "mod", "tidy")
-	cmd.Dir = wd
-	cmd.Run()
-
-	cmd = exec.Command("go", "run", "dumper/main.go")
-	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
-
-		return err
-	}
-
-	cmd = exec.Command("go", "get", "-u")
-	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
-
-		return err
-	}
-
-	cmd = exec.Command("go", "build", "-o", "bima")
-	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
-
-		return err
-	}
-
-	binPath := os.Getenv("GOBIN")
-	if binPath == "" {
-		binPath = os.Getenv("GOPATH")
-	}
-
-	if binPath == "" {
-		output, err := exec.Command("which", "go").CombinedOutput()
-		if err != nil {
-			color.New(color.FgRed).Println(string(output))
-
-			return err
-		}
-
-		binPath = filepath.Dir(string(output))
-	}
-
-	cmd = exec.Command("mv", "bima", fmt.Sprintf("%s/bin/bima", binPath))
-	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
-
-		return err
-	}
-
-	progress.Stop()
-	color.New(color.FgGreen).Print("Bima Cli is upgraded to ")
-	color.New(color.FgGreen, color.Bold).Println(latest)
-
-	return nil
 }
