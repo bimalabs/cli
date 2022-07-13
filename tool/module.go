@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/bimalabs/cli/generated/generator"
+	"github.com/bimalabs/cli/generators"
 	bima "github.com/bimalabs/framework/v4"
 	"github.com/bimalabs/framework/v4/configs"
-	"github.com/bimalabs/framework/v4/generators"
 	"github.com/bimalabs/framework/v4/parsers"
 	"github.com/bimalabs/framework/v4/utils"
 	"github.com/fatih/color"

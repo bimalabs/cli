@@ -1,8 +1,8 @@
 package provider
 
 import (
+	"github.com/bimalabs/cli/generators"
 	bima "github.com/bimalabs/framework/v4"
-	"github.com/bimalabs/framework/v4/generators"
 	"github.com/gertd/go-pluralize"
 	"github.com/sarulabs/dingo/v4"
 )

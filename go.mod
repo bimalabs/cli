@@ -3,10 +3,10 @@ module github.com/bimalabs/cli
 go 1.16
 
 require (
-	github.com/bimalabs/framework/v4 v4.1.1
+	github.com/bimalabs/framework/v4 v4.1.3
 	github.com/fatih/color v1.13.0
 	github.com/gertd/go-pluralize v0.2.1
-	github.com/goccy/go-json v0.9.8 // indirect
+	github.com/goccy/go-json v0.9.8
 	github.com/iancoleman/strcase v0.2.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/joho/godotenv v1.4.0

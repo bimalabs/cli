@@ -346,7 +346,7 @@ func (u util) Update() error {
 }
 
 func (u util) Run(file string) error {
-	return command("go run cmd/main.go run %s").run(file)
+	return command("go run -race cmd/main.go run %s").run(file)
 }
 
 func (u util) Genproto() error {

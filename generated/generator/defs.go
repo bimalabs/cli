@@ -6,7 +6,7 @@ import (
 	"github.com/sarulabs/di/v2"
 	"github.com/sarulabs/dingo/v4"
 
-	generators "github.com/bimalabs/framework/v4/generators"
+	generators "github.com/bimalabs/cli/generators"
 )
 
 func getDiDefs(provider dingo.Provider) []di.Def {

@@ -10,7 +10,7 @@ import (
 
 	providerPkg "github.com/bimalabs/cli/provider"
 
-	generators "github.com/bimalabs/framework/v4/generators"
+	generators "github.com/bimalabs/cli/generators"
 )
 
 // C retrieves a Container from an interface.
