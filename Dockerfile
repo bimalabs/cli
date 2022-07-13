@@ -8,3 +8,7 @@ RUN go get && go mod tidy
 RUN go build -o bima .
 RUN mv /go/src/cli/bima /usr/local/bin/bima
 RUN chmod a+x /usr/local/bin/bima
+
+FROM alpine:latest
+
+COPY --from=builder /usr/local/bin/bima /usr/local/bin/bima
