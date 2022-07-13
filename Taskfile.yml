@@ -1,5 +1,8 @@
 version: '3'
 tasks:
+    build:
+        cmds:
+            - docker build -t ad3n/bima-cli:latest .
     install:
         cmds:
             - go build -o bima
