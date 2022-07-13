@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bimalabs/cli/generated/generator"
-	"github.com/bimalabs/cli/generators"
+	"github.com/bimalabs/cli/generated/engine"
+	"github.com/bimalabs/cli/generator"
 	bima "github.com/bimalabs/framework/v4"
 	"github.com/bimalabs/framework/v4/configs"
 	"github.com/bimalabs/framework/v4/parsers"
@@ -40,7 +40,7 @@ func (m Module) Create(file string, version string) error {
 	env := configs.Env{}
 	config(&env, file, filepath.Ext(file))
 
-	container, err := generator.NewContainer(bima.Generator)
+	container, err := engine.NewContainer(bima.Generator)
 	if err != nil {
 		color.New(color.FgRed).Println(err.Error())
 
@@ -137,7 +137,7 @@ func remove(module string) {
 
 	jsonModules := fmt.Sprintf("%s/swaggers/modules.json", workDir)
 	file, _ := os.ReadFile(jsonModules)
-	modulesJson := []generators.ModuleJson{}
+	modulesJson := []generator.ModuleJson{}
 	registered := modulesJson
 	_ = json.Unmarshal(file, &modulesJson)
 	for _, v := range modulesJson {
@@ -186,9 +186,9 @@ func remove(module string) {
 	util.Println(" deleted")
 }
 
-func create(generator *generators.Factory, util *color.Color, name string) error {
-	module := generators.ModuleTemplate{}
-	field := generators.FieldTemplate{}
+func create(factory *generator.Factory, util *color.Color, name string) error {
+	module := generator.ModuleTemplate{}
+	field := generator.FieldTemplate{}
 	mapType := utils.NewType()
 
 	util.Println("Welcome to Bima Skeleton Module Generator")
@@ -208,7 +208,7 @@ func create(generator *generators.Factory, util *color.Color, name string) error
 			column(util, &field, mapType)
 
 			field.Name = strings.Replace(field.Name, " ", "", -1)
-			column := generators.FieldTemplate{}
+			column := generator.FieldTemplate{}
 
 			_ = copier.Copy(&column, field)
 
@@ -228,7 +228,7 @@ func create(generator *generators.Factory, util *color.Color, name string) error
 		return errors.New("You must have at least one column in table")
 	}
 
-	generator.Generate(module)
+	factory.Generate(module)
 
 	workDir, _ := os.Getwd()
 	fmt.Print("Module ")
@@ -238,7 +238,7 @@ func create(generator *generators.Factory, util *color.Color, name string) error
 	return nil
 }
 
-func column(util *color.Color, field *generators.FieldTemplate, mapType utils.Type) {
+func column(util *color.Color, field *generator.FieldTemplate, mapType utils.Type) {
 	err := interact.NewInteraction("Input column name?").Resolve(&field.Name)
 	if err != nil {
 		util.Println(err.Error())
