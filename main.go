@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.2.4"
+	version              = "v1.2.5"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -352,6 +352,12 @@ func main() {
 						runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
 						return runner.Run(context.TODO(), cmd)
+					}
+
+					if err := tool.Call("dump"); err != nil {
+						color.New(color.FgRed).Println("Error update DI container")
+
+						return err
 					}
 
 					return tool.Call("run", file)
