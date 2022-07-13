@@ -3,6 +3,7 @@ tasks:
     build:
         cmds:
             - docker build -t ad3n/bima-cli:latest .
+            - docker-slim build --target ad3n/bima-cli:latest --tag ad3n/bima-cli:slim --http-probe=false
     install:
         cmds:
             - go build -o bima
