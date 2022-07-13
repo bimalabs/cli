@@ -1,0 +1,292 @@
+{
+  "version": "1.0",
+  "engine": "darwin|Transformer|1.37.5|latest|latest",
+  "containerized": false,
+  "host_distro": {
+    "name": "",
+    "version": "",
+    "display_name": "other"
+  },
+  "type": "build",
+  "state": "done",
+  "target_reference": "ad3n/bima-cli:latest",
+  "system": {
+    "type": "Linux",
+    "release": "5.10.104-linuxkit",
+    "distro": {
+      "name": "Alpine Linux",
+      "version": "3.16.0",
+      "display_name": "Alpine Linux v3.16"
+    }
+  },
+  "source_image": {
+    "identity": {
+      "id": "sha256:5a3368a5761d3732f9597c2619276b2bfeb5899b2908654612c5d5b8fb981755",
+      "tags": [
+        "latest"
+      ],
+      "names": [
+        "ad3n/bima-cli:latest"
+      ]
+    },
+    "size": 357555670,
+    "size_human": "358 MB",
+    "create_time": "2022-07-13T23:16:26Z",
+    "docker_version": "",
+    "architecture": "amd64",
+    "os": "linux",
+    "env_vars": [
+      "PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "GOLANG_VERSION=1.18.4",
+      "GOPATH=/go"
+    ],
+    "container_entry": {
+      "exe_path": ""
+    }
+  },
+  "minified_image_size": 1865672,
+  "minified_image_size_human": "1.9 MB",
+  "minified_image": "ad3n/bima-cli:slim",
+  "minified_image_has_data": true,
+  "minified_by": 191.64980232323796,
+  "artifact_location": "/tmp/docker-slim-state/.docker-slim-state/images/5a3368a5761d3732f9597c2619276b2bfeb5899b2908654612c5d5b8fb981755/artifacts",
+  "container_report_name": "creport.json",
+  "seccomp_profile_name": "ad3n-bima-cli-seccomp.json",
+  "apparmor_profile_name": "ad3n-bima-cli-apparmor-profile",
+  "image_stack": [
+    {
+      "is_top_image": true,
+      "id": "sha256:5a3368a5761d3732f9597c2619276b2bfeb5899b2908654612c5d5b8fb981755",
+      "full_name": "ad3n/bima-cli:latest",
+      "repo_name": "ad3n/bima-cli",
+      "version_tag": "latest",
+      "raw_tags": [
+        "ad3n/bima-cli:latest"
+      ],
+      "create_time": "2022-07-13T23:16:26Z",
+      "new_size": 357555670,
+      "new_size_human": "358 MB",
+      "instructions": [
+        {
+          "type": "ADD",
+          "time": "2022-05-23T19:19:30Z",
+          "is_nop": true,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 5529096,
+          "size_human": "5.5 MB",
+          "params": "file:8e81116368669ed3dd361bc898d61bff249f524139a239fdaf3ec46869a39921 in /",
+          "command_snippet": "ADD file:8e81116368669ed3dd361bc898d61bff249...",
+          "command_all": "ADD file:8e81116368669ed3dd361bc898d61bff249f524139a239fdaf3ec46869a39921 /",
+          "target": "/",
+          "source_type": "file"
+        },
+        {
+          "type": "CMD",
+          "time": "2022-05-23T19:19:31Z",
+          "is_nop": true,
+          "is_exec_form": true,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 0,
+          "params": "[\"/bin/sh\"]\n",
+          "command_snippet": "CMD [\"/bin/sh\"]\n",
+          "command_all": "CMD [\"/bin/sh\"]\n"
+        },
+        {
+          "type": "RUN",
+          "time": "2022-05-25T00:19:44Z",
+          "is_nop": false,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 495629,
+          "size_human": "496 kB",
+          "command_snippet": "RUN apk add --no-cache ca-certificates",
+          "command_all": "RUN apk add --no-cache ca-certificates",
+          "system_commands": [
+            "apk add --no-cache ca-certificates"
+          ]
+        },
+        {
+          "type": "RUN",
+          "time": "2022-05-25T00:19:45Z",
+          "is_nop": false,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 17,
+          "size_human": "17 B",
+          "command_snippet": "RUN [ ! -e /etc/nsswitch.conf ] && \\\n\techo '...",
+          "command_all": "RUN [ ! -e /etc/nsswitch.conf ] && \\\n\techo 'hosts: files dns' > /etc/nsswitch.conf",
+          "system_commands": [
+            "[ ! -e /etc/nsswitch.conf ]",
+            "echo 'hosts: files dns' > /etc/nsswitch.conf"
+          ]
+        },
+        {
+          "type": "ENV",
+          "time": "2022-05-25T00:19:45Z",
+          "is_nop": true,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 0,
+          "params": "PATH=/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "command_snippet": "ENV PATH=/usr/local/go/bin:/usr/local/sbin:/...",
+          "command_all": "ENV PATH=/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        },
+        {
+          "type": "ENV",
+          "time": "2022-07-13T00:00:12Z",
+          "is_nop": true,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 0,
+          "params": "GOLANG_VERSION=1.18.4",
+          "command_snippet": "ENV GOLANG_VERSION=1.18.4",
+          "command_all": "ENV GOLANG_VERSION=1.18.4"
+        },
+        {
+          "type": "RUN",
+          "time": "2022-07-13T00:01:47Z",
+          "is_nop": false,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 321883598,
+          "size_human": "322 MB",
+          "command_snippet": "RUN set -eux; \tapk add --no-cache --virtual ...",
+          "command_all": "RUN set -eux; \tapk add --no-cache --virtual .fetch-deps gnupg; \tarch=\"$(apk --print-arch)\"; \turl=; \tcase \"$arch\" in \t\t'x86_64') \t\t\texport GOAMD64='v1' GOARCH='amd64' GOOS='linux'; \t\t\t;; \t\t'armhf') \t\t\texport GOARCH='arm' GOARM='6' GOOS='linux'; \t\t\t;; \t\t'armv7') \t\t\texport GOARCH='arm' GOARM='7' GOOS='linux'; \t\t\t;; \t\t'aarch64') \t\t\texport GOARCH='arm64' GOOS='linux'; \t\t\t;; \t\t'x86') \t\t\texport GO386='softfloat' GOARCH='386' GOOS='linux'; \t\t\t;; \t\t'ppc64le') \t\t\texport GOARCH='ppc64le' GOOS='linux'; \t\t\t;; \t\t's390x') \t\t\texport GOARCH='s390x' GOOS='linux'; \t\t\t;; \t\t*) echo >&2 \"error: unsupported architecture '$arch' (likely packaging update needed)\"; exit 1 ;; \tesac; \tbuild=; \tif [ -z \"$url\" ]; then \t\tbuild=1; \t\turl='https://dl.google.com/go/go1.18.4.src.tar.gz'; \t\tsha256='4525aa6b0e3cecb57845f4060a7075aafc9ab752bb7b6b4cf8a212d43078e1e4'; \tfi; \t\twget -O go.tgz.asc \"$url.asc\"; \twget -O go.tgz \"$url\"; \techo \"$sha256 *go.tgz\" | sha256sum -c -; \t\tGNUPGHOME=\"$(mktemp -d)\"; export GNUPGHOME; \tgpg --batch --keyserver keyserver.ubuntu.com --recv-keys 'EB4C 1BFD 4F04 2F6D DDCC  EC91 7721 F63B D38B 4796'; \tgpg --batch --keyserver keyserver.ubuntu.com --recv-keys '2F52 8D36 D67B 69ED F998  D857 78BD 6547 3CB3 BD13'; \tgpg --batch --verify go.tgz.asc go.tgz; \tgpgconf --kill all; \trm -rf \"$GNUPGHOME\" go.tgz.asc; \t\ttar -C /usr/local -xzf go.tgz; \trm go.tgz; \t\tif [ -n \"$build\" ]; then \t\tapk add --no-cache --virtual .build-deps \t\t\tbash \t\t\tgcc \t\t\tgo \t\t\tmusl-dev \t\t; \t\t\t\texport GOCACHE='/tmp/gocache'; \t\t\t\t( \t\t\tcd /usr/local/go/src; \t\t\texport GOROOT_BOOTSTRAP=\"$(go env GOROOT)\" GOHOSTOS=\"$GOOS\" GOHOSTARCH=\"$GOARCH\"; \t\t\t./make.bash; \t\t); \t\t\t\tapk del --no-network .build-deps; \t\t\t\trm -rf \t\t\t/usr/local/go/pkg/*/cmd \t\t\t/usr/local/go/pkg/bootstrap \t\t\t/usr/local/go/pkg/obj \t\t\t/usr/local/go/pkg/tool/*/api \t\t\t/usr/local/go/pkg/tool/*/go_bootstrap \t\t\t/usr/local/go/src/cmd/dist/dist \t\t\t\"$GOCACHE\" \t\t; \tfi; \t\tapk del --no-network .fetch-deps; \t\tgo version",
+          "system_commands": [
+            "set -eux",
+            "apk add --no-cache --virtual .fetch-deps gnupg",
+            "arch=\"$(apk --print-arch)\"",
+            "url=",
+            "case \"$arch\" in 'x86_64') export GOAMD64='v1' GOARCH='amd64' GOOS='linux'",
+            "",
+            "",
+            "'armhf') export GOARCH='arm' GOARM='6' GOOS='linux'",
+            "",
+            "",
+            "'armv7') export GOARCH='arm' GOARM='7' GOOS='linux'",
+            "",
+            "",
+            "'aarch64') export GOARCH='arm64' GOOS='linux'",
+            "",
+            "",
+            "'x86') export GO386='softfloat' GOARCH='386' GOOS='linux'",
+            "",
+            "",
+            "'ppc64le') export GOARCH='ppc64le' GOOS='linux'",
+            "",
+            "",
+            "'s390x') export GOARCH='s390x' GOOS='linux'",
+            "",
+            "",
+            "*) echo >&2 \"error: unsupported architecture '$arch' (likely packaging update needed)\"",
+            "exit 1",
+            "",
+            "esac",
+            "build=",
+            "if [ -z \"$url\" ]",
+            "then build=1",
+            "url='https://dl.google.com/go/go1.18.4.src.tar.gz'",
+            "sha256='4525aa6b0e3cecb57845f4060a7075aafc9ab752bb7b6b4cf8a212d43078e1e4'",
+            "fi",
+            "wget -O go.tgz.asc \"$url.asc\"",
+            "wget -O go.tgz \"$url\"",
+            "echo \"$sha256 *go.tgz\" | sha256sum -c -",
+            "GNUPGHOME=\"$(mktemp -d)\"",
+            "export GNUPGHOME",
+            "gpg --batch --keyserver keyserver.ubuntu.com --recv-keys 'EB4C 1BFD 4F04 2F6D DDCC  EC91 7721 F63B D38B 4796'",
+            "gpg --batch --keyserver keyserver.ubuntu.com --recv-keys '2F52 8D36 D67B 69ED F998  D857 78BD 6547 3CB3 BD13'",
+            "gpg --batch --verify go.tgz.asc go.tgz",
+            "gpgconf --kill all",
+            "rm -rf \"$GNUPGHOME\" go.tgz.asc",
+            "tar -C /usr/local -xzf go.tgz",
+            "rm go.tgz",
+            "if [ -n \"$build\" ]",
+            "then apk add --no-cache --virtual .build-deps bash gcc go musl-dev",
+            "export GOCACHE='/tmp/gocache'",
+            "( cd /usr/local/go/src",
+            "export GOROOT_BOOTSTRAP=\"$(go env GOROOT)\" GOHOSTOS=\"$GOOS\" GOHOSTARCH=\"$GOARCH\"",
+            "./make.bash",
+            ")",
+            "apk del --no-network .build-deps",
+            "rm -rf /usr/local/go/pkg/*/cmd /usr/local/go/pkg/bootstrap /usr/local/go/pkg/obj /usr/local/go/pkg/tool/*/api /usr/local/go/pkg/tool/*/go_bootstrap /usr/local/go/src/cmd/dist/dist \"$GOCACHE\"",
+            "fi",
+            "apk del --no-network .fetch-deps",
+            "go version"
+          ]
+        },
+        {
+          "type": "ENV",
+          "time": "2022-07-13T00:01:48Z",
+          "is_nop": true,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 0,
+          "params": "GOPATH=/go",
+          "command_snippet": "ENV GOPATH=/go",
+          "command_all": "ENV GOPATH=/go"
+        },
+        {
+          "type": "ENV",
+          "time": "2022-07-13T00:01:48Z",
+          "is_nop": true,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 0,
+          "params": "PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "command_snippet": "ENV PATH=/go/bin:/usr/local/go/bin:/usr/loca...",
+          "command_all": "ENV PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        },
+        {
+          "type": "RUN",
+          "time": "2022-07-13T00:01:49Z",
+          "is_nop": false,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 0,
+          "command_snippet": "RUN mkdir -p \"$GOPATH/src\" \"$GOPATH/bin\" && ...",
+          "command_all": "RUN mkdir -p \"$GOPATH/src\" \"$GOPATH/bin\" && \\\n\tchmod -R 777 \"$GOPATH\"",
+          "system_commands": [
+            "mkdir -p \"$GOPATH/src\" \"$GOPATH/bin\"",
+            "chmod -R 777 \"$GOPATH\""
+          ]
+        },
+        {
+          "type": "WORKDIR",
+          "time": "2022-07-13T00:01:49Z",
+          "is_nop": true,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 0,
+          "params": "/go",
+          "command_snippet": "WORKDIR /go",
+          "command_all": "WORKDIR /go",
+          "system_commands": [
+            "mkdir -p /go"
+          ]
+        },
+        {
+          "type": "RUN",
+          "time": "2022-07-13T23:16:26Z",
+          "is_last_instruction": true,
+          "is_nop": false,
+          "is_exec_form": true,
+          "local_image_exists": true,
+          "layer_index": 0,
+          "size": 29647330,
+          "size_human": "30 MB",
+          "command_snippet": "RUN [\"COPY\",\"/usr/local/bin/bima\",\"/usr/loca...",
+          "command_all": "RUN [\"COPY\",\"/usr/local/bin/bima\",\"/usr/local/bin/bima\"]",
+          "system_commands": [
+            "[\"COPY\",\"/usr/local/bin/bima\",\"/usr/local/bin/bima\"]"
+          ],
+          "comment": "buildkit.dockerfile.v0",
+          "raw_tags": [
+            "ad3n/bima-cli:latest"
+          ]
+        }
+      ]
+    }
+  ]
+}
