@@ -1,17 +1,21 @@
 package generator
 
 import (
+	"log"
 	"os"
 	"strings"
 	engine "text/template"
 
-	"github.com/bimalabs/framework/v4/parsers"
 	"gopkg.in/yaml.v2"
 )
 
-type Module struct {
-	Config []string `yaml:"modules"`
-}
+const c = "configs/modules.yaml"
+
+type (
+	Module struct {
+		Config []string `yaml:"modules"`
+	}
+)
 
 func (g *Module) Generate(template *Template, modulePath string, packagePath string, templatePath string) {
 	var str strings.Builder
@@ -39,7 +43,7 @@ func (g *Module) Generate(template *Template, modulePath string, packagePath str
 	str.WriteString(template.ModuleLowercase)
 
 	workDir, _ := os.Getwd()
-	g.Config = parsers.ParseModule(workDir)
+	g.Config = g.parse(workDir)
 	g.Config = append(g.Config, str.String())
 	g.Config = g.makeUnique(g.Config)
 
@@ -51,7 +55,7 @@ func (g *Module) Generate(template *Template, modulePath string, packagePath str
 	str.Reset()
 	str.WriteString(workDir)
 	str.WriteString("/")
-	str.WriteString(parsers.ModulePath)
+	str.WriteString(c)
 
 	err = os.WriteFile(str.String(), modules, 0644)
 	if err != nil {
@@ -73,4 +77,27 @@ func (g *Module) makeUnique(modules []string) []string {
 	}
 
 	return result
+}
+
+func (g *Module) parse(dir string) []string {
+	var path strings.Builder
+	path.WriteString(dir)
+	path.WriteString("/")
+	path.WriteString(c)
+
+	config, err := os.ReadFile(path.String())
+	if err != nil {
+		log.Println(err)
+
+		return []string{}
+	}
+
+	err = yaml.Unmarshal(config, g)
+	if err != nil {
+		log.Println(err)
+
+		return []string{}
+	}
+
+	return g.Config
 }

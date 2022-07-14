@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -16,7 +17,6 @@ import (
 	"github.com/bimalabs/cli/generator"
 	bima "github.com/bimalabs/framework/v4"
 	"github.com/bimalabs/framework/v4/configs"
-	"github.com/bimalabs/framework/v4/parsers"
 	"github.com/bimalabs/framework/v4/utils"
 	"github.com/fatih/color"
 	"github.com/gertd/go-pluralize"
@@ -26,9 +26,18 @@ import (
 	"golang.org/x/mod/modfile"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"gopkg.in/yaml.v2"
 )
 
-type Module string
+const c = "configs/modules.yaml"
+
+type (
+	module struct {
+		Config []string `yaml:"modules"`
+	}
+
+	Module string
+)
 
 func (m Module) Create(file string, version string) error {
 	if err := Call("dump"); err != nil {
@@ -115,7 +124,7 @@ func remove(module string) {
 	moduleName := strcase.ToCamel(pluralizer.Singular(module))
 	modulePlural := strcase.ToDelimited(pluralizer.Plural(moduleName), '_')
 	moduleUnderscore := strcase.ToDelimited(module, '_')
-	list := parsers.ParseModule(workDir)
+	list := parseModule(workDir)
 
 	exist := false
 	for _, v := range list {
@@ -184,6 +193,30 @@ func remove(module string) {
 	fmt.Print("Module ")
 	util.Print(module)
 	util.Println(" deleted")
+}
+
+func parseModule(dir string) []string {
+	var path strings.Builder
+	path.WriteString(dir)
+	path.WriteString("/")
+	path.WriteString(c)
+
+	config, err := os.ReadFile(path.String())
+	mapping := module{}
+	if err != nil {
+		log.Println(err)
+
+		return []string{}
+	}
+
+	err = yaml.Unmarshal(config, &mapping)
+	if err != nil {
+		log.Println(err)
+
+		return []string{}
+	}
+
+	return mapping.Config
 }
 
 func create(factory *generator.Factory, util *color.Color, name string) error {

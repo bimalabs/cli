@@ -3,7 +3,7 @@ module github.com/bimalabs/cli
 go 1.16
 
 require (
-	github.com/bimalabs/framework/v4 v4.1.5
+	github.com/bimalabs/framework/v4 v4.1.6
 	github.com/fatih/color v1.13.0
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/goccy/go-json v0.9.8
@@ -35,7 +35,6 @@ require (
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/text v0.3.7
 	golang.org/x/tools v0.1.11 // indirect
-	google.golang.org/genproto v0.0.0-20220713161829-9c7dac0a6568 // indirect
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 	google.golang.org/protobuf v1.28.0
 	mvdan.cc/sh v2.6.4+incompatible
