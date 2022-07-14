@@ -27,18 +27,15 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.3
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.15.8 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/urfave/cli/v2 v2.11.0
 	github.com/xanzy/ssh-agent v0.3.1 // indirect
-	golang.org/x/sys v0.0.0-20220712014510-0a85c31ab51e // indirect
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/text v0.3.7
 	golang.org/x/tools v0.1.11 // indirect
 	google.golang.org/genproto v0.0.0-20220713161829-9c7dac0a6568 // indirect
-	google.golang.org/grpc v1.48.0 // indirect
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 	google.golang.org/protobuf v1.28.0
 	mvdan.cc/sh v2.6.4+incompatible
