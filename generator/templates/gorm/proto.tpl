@@ -13,6 +13,24 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 		title: "{{.Module}} Service";
 		version: "{{.ApiVersion}}";
 	};
+    consumes: "application/json";
+    produces: "application/json";
+    security_definitions: {
+        security: {
+        key: "bearer";
+        value: {
+                type: TYPE_API_KEY;
+                in: IN_HEADER;
+                name: "Authorization";
+                description: "Authentication token, prefixed by Bearer: Bearer (token)";
+            }
+        }
+    };
+    security: {
+        security_requirement: {
+            key: "bearer";
+        }
+    };
 };
 
 message {{.Module}} {
