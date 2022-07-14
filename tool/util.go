@@ -327,7 +327,7 @@ func (u util) Debug(pid int) error {
 
 func (u util) Build(name string, debug bool) error {
 	if debug {
-		return command("go build -gcflags \"all=-N -l\" -o %s cmd/main.go").run(name)
+		return command("go build -race -gcflags \"all=-N -l\" -o %s cmd/main.go").run(name)
 	}
 
 	return command("go build -o %s cmd/main.go").run(name)

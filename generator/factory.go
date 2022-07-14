@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"embed"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -12,6 +13,8 @@ import (
 )
 
 // go:embed templates/*
+var content embed.FS
+
 type (
 	Generator interface {
 		Generate(template *Template, modulePath string, packagePath string, templatePath string)

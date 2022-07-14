@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.2.11"
+	version              = "v1.2.12"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -348,7 +348,7 @@ func main() {
 
 						progress.Stop()
 
-						cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("./bima -race run %s", file)), "")
+						cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("./bima run %s", file)), "")
 						runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
 						return runner.Run(context.TODO(), cmd)
