@@ -19,104 +19,104 @@ const (
 	spinerIndex = 9
 	duration    = 77 * time.Millisecond
 	env         = `APP_DEBUG=true
-    APP_PORT=7777
-    GRPC_PORT=1717
-    APP_NAME=%s
-    APP_SECRET=%s
+APP_PORT=7777
+GRPC_PORT=1717
+APP_NAME=%s
+APP_SECRET=%s
         `
 
 	adapter = `package adapters
 
-    import (
-        "context"
+import (
+    "context"
 
-        "github.com/bimalabs/framework/v4/paginations"
-        "github.com/vcraescu/go-paginator/v2"
-    )
+    "github.com/bimalabs/framework/v4/paginations"
+    "github.com/vcraescu/go-paginator/v2"
+)
 
-    type %s struct {
-    }
+type %s struct {
+}
 
-    func (a *%s) CreateAdapter(ctx context.Context, paginator paginations.Pagination) paginator.Adapter {
-        // TODO
+func (a *%s) CreateAdapter(ctx context.Context, paginator paginations.Pagination) paginator.Adapter {
+    // TODO
 
-        return nil
-    }
-    `
+    return nil
+}
+`
 
 	driver = `package drivers
 
-    import (
-        "gorm.io/gorm"
-    )
+import (
+    "gorm.io/gorm"
+)
 
-    type %s string
+type %s string
 
-    func (_ %s) Connect(host string, port int, user string, password string, dbname string, debug bool) *gorm.DB {
-        // TODO
+func (_ %s) Connect(host string, port int, user string, password string, dbname string, debug bool) *gorm.DB {
+    // TODO
 
-        return nil
-    }
+    return nil
+}
 
-    func (m %s) Name() string {
-        return string(m)
-    }
-    `
+func (m %s) Name() string {
+    return string(m)
+}
+`
 
 	route = `package routes
 
-    import (
-        "net/http"
+import (
+    "net/http"
 
-        "github.com/bimalabs/framework/v4/middlewares"
-        "google.golang.org/grpc"
-    )
+    "github.com/bimalabs/framework/v4/middlewares"
+    "google.golang.org/grpc"
+)
 
-    type %s struct {
-    }
+type %s struct {
+}
 
-    func (r *%s) Path() string {
-        return "/%s"
-    }
+func (r *%s) Path() string {
+    return "/%s"
+}
 
-    func (r *%s) Method() string {
-        return http.MethodGet
-    }
+func (r *%s) Method() string {
+    return http.MethodGet
+}
 
-    func (r *%s) SetClient(client *grpc.ClientConn) {
-        // TODO
-    }
+func (r *%s) SetClient(client *grpc.ClientConn) {
+    // TODO
+}
 
-    func (r *%s) Middlewares() []middlewares.Middleware {
-        // TODO
+func (r *%s) Middlewares() []middlewares.Middleware {
+    // TODO
 
-        return nil
-    }
+    return nil
+}
 
-    func (r *%s) Handle(response http.ResponseWriter, request *http.Request, params map[string]string) {
-        // TODO
-    }
-    `
+func (r *%s) Handle(response http.ResponseWriter, request *http.Request, params map[string]string) {
+    // TODO
+}
+`
 
 	middleware = `package middlewares
 
-    import (
-        "net/http"
-    )
+import (
+    "net/http"
+)
 
-    type %s struct {
-    }
+type %s struct {
+}
 
-    func (m *%s) Attach(request *http.Request, response http.ResponseWriter) bool {
-        // TODO
+func (m *%s) Attach(request *http.Request, response http.ResponseWriter) bool {
+    // TODO
 
-        return false
-    }
+    return false
+}
 
-    func (m *%s) Priority() int {
-        return 0
-    }
-    `
+func (m *%s) Priority() int {
+    return 0
+}
+`
 )
 
 type (
