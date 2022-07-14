@@ -50,7 +50,7 @@
 
 - `bima generate` to generate code from protobuff
 
-- `bima run <mode> [-c <config>]` to run application using `config` file
+- `bima run <mode> [-c <config>]` to run application on `mode` mode using `config` file
 
 - `bima debug` to debug application
 
