@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.2.13"
+	version              = "v1.2.14"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -30,20 +30,22 @@ var (
 func main() {
 	file := ""
 	app := &cli.App{
-		Name:                 "Bima Cli",
+		Name:                 "Bima cli",
 		Usage:                "Bima Framework Toolkit",
+		Description:          "bima version",
 		EnableBashCompletion: true,
 		Commands: []*cli.Command{
 			{
-				Name:    "create",
-				Aliases: []string{"new"},
-				Usage:   "bima create <command>",
+				Name:        "create",
+				Aliases:     []string{"new"},
+				Usage:       "Create something with bima",
+				Description: "bima create <command>",
 				Subcommands: []*cli.Command{
 					{
 						Name:        "project",
 						Aliases:     []string{"app"},
-						Usage:       "bima create app <name>",
-						Description: "Create new application or project",
+						Description: "bima create app <name>",
+						Usage:       "Create new application or project",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -58,8 +60,8 @@ func main() {
 					{
 						Name:        "middleware",
 						Aliases:     []string{"mid"},
-						Usage:       "bima create middleware <name>",
-						Description: "Create new middleware",
+						Description: "bima create middleware <name>",
+						Usage:       "Create new middleware",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -74,8 +76,8 @@ func main() {
 					{
 						Name:        "driver",
 						Aliases:     []string{"dvr"},
-						Usage:       "bima create driver <name>",
-						Description: "Create new driver",
+						Description: "bima create driver <name>",
+						Usage:       "Create new driver",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -90,8 +92,8 @@ func main() {
 					{
 						Name:        "adapter",
 						Aliases:     []string{"adp"},
-						Usage:       "bima create adapter <name>",
-						Description: "Create new adapter",
+						Description: "bima create adapter <name>",
+						Usage:       "Create new adapter",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -106,8 +108,8 @@ func main() {
 					{
 						Name:        "route",
 						Aliases:     []string{"rt"},
-						Usage:       "bima create route <name>",
-						Description: "Create new route",
+						Description: "bima create route <name>",
+						Usage:       "Create new route",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -122,9 +124,10 @@ func main() {
 				},
 			},
 			{
-				Name:    "module",
-				Aliases: []string{"mod"},
-				Usage:   "module <command>",
+				Name:        "module",
+				Aliases:     []string{"mod"},
+				Usage:       "Create or remove module",
+				Description: "module <command>",
 				Subcommands: []*cli.Command{
 					{
 						Name: "add",
@@ -138,8 +141,8 @@ func main() {
 							},
 						},
 						Aliases:     []string{"new"},
-						Usage:       "module add <name> [<version> -c <config>]",
-						Description: "Create new module <name> with <version> using <config> file",
+						Description: "module add <name> [<version> -c <config>]",
+						Usage:       "Create new module <name> with <version> using <config> file",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -159,8 +162,8 @@ func main() {
 					{
 						Name:        "remove",
 						Aliases:     []string{"rm", "rem"},
-						Usage:       "module remove <name>",
-						Description: "Remove module <name>",
+						Description: "module remove <name>",
+						Usage:       "Remove module <name>",
 						Action: func(cCtx *cli.Context) error {
 							name := cCtx.Args().First()
 							if name == "" {
@@ -177,11 +180,11 @@ func main() {
 			{
 				Name:        "dump",
 				Aliases:     []string{"dmp"},
-				Usage:       "dump",
-				Description: "Generate service container",
+				Description: "dump",
+				Usage:       "Dump service container",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
-					progress.Suffix = " Generate service container... "
+					progress.Suffix = " Dumping service container... "
 					progress.Start()
 					time.Sleep(1 * time.Second)
 
@@ -194,8 +197,8 @@ func main() {
 			{
 				Name:        "build",
 				Aliases:     []string{"install", "compile"},
-				Usage:       "build <name>",
-				Description: "Build application to binary",
+				Description: "build <name>",
+				Usage:       "Build application to binary",
 				Action: func(cCtx *cli.Context) error {
 					name := cCtx.Args().First()
 					if name == "" {
@@ -216,7 +219,7 @@ func main() {
 
 					if err := tool.Call("dump"); err != nil {
 						progress.Stop()
-						color.New(color.FgRed).Println("Error update DI container")
+						color.New(color.FgRed).Println("Error updating services container")
 
 						return err
 					}
@@ -230,8 +233,8 @@ func main() {
 			{
 				Name:        "update",
 				Aliases:     []string{"upd"},
-				Usage:       "update",
-				Description: "Update project dependencies",
+				Description: "update",
+				Usage:       "Update project dependencies",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Updating dependencies... "
@@ -245,7 +248,7 @@ func main() {
 
 					if err := tool.Call("dump"); err != nil {
 						progress.Stop()
-						color.New(color.FgRed).Println("Error update DI container")
+						color.New(color.FgRed).Println("Error updating services container")
 
 						return err
 					}
@@ -258,8 +261,8 @@ func main() {
 			{
 				Name:        "clean",
 				Aliases:     []string{"cln"},
-				Usage:       "clean",
-				Description: "Cleaning project dependencies",
+				Description: "clean",
+				Usage:       "Cleaning project dependencies",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 					progress.Suffix = " Cleaning dependencies... "
@@ -273,7 +276,7 @@ func main() {
 
 					if err := tool.Call("dump"); err != nil {
 						progress.Stop()
-						color.New(color.FgRed).Println("Error update DI container")
+						color.New(color.FgRed).Println("Error updating services container")
 
 						return err
 					}
@@ -286,11 +289,11 @@ func main() {
 			{
 				Name:        "generate",
 				Aliases:     []string{"gen", "genproto"},
-				Usage:       "generate",
-				Description: "Generate code from protobuf file(s)",
+				Description: "generate",
+				Usage:       "Generate code from protobuf file(s)",
 				Action: func(*cli.Context) error {
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
-					progress.Suffix = " Generating protobuff... "
+					progress.Suffix = " Generating codes from protobuff file(s)... "
 					progress.Start()
 					if err := tool.Call("genproto"); err != nil {
 						progress.Stop()
@@ -308,7 +311,7 @@ func main() {
 
 					if err := tool.Call("dump"); err != nil {
 						progress.Stop()
-						color.New(color.FgRed).Println("Error update DI container")
+						color.New(color.FgRed).Println("Error updating services container")
 
 						return err
 					}
@@ -330,8 +333,8 @@ func main() {
 					},
 				},
 				Aliases:     []string{"rn"},
-				Usage:       "run <mode> [-c <config>]",
-				Description: "Run application using <config> file",
+				Description: "run <mode> [-c <config>]",
+				Usage:       "Run application using <config> file",
 				Action: func(cCtx *cli.Context) error {
 					mode := cCtx.Args().First()
 					if mode == "debug" {
@@ -359,7 +362,7 @@ func main() {
 					progress.Start()
 					if err := tool.Call("dump"); err != nil {
 						progress.Stop()
-						color.New(color.FgRed).Println("Error update DI container")
+						color.New(color.FgRed).Println("Error updating services container")
 
 						return err
 					}
@@ -372,8 +375,8 @@ func main() {
 			{
 				Name:        "debug",
 				Aliases:     []string{"dbg"},
-				Usage:       "debug",
-				Description: "Debug application",
+				Description: "debug",
+				Usage:       "Debug application, your application must running in debug mode",
 				Action: func(cCtx *cli.Context) error {
 					content, err := os.ReadFile(".pid")
 					if err != nil {
@@ -395,8 +398,8 @@ func main() {
 			{
 				Name:        "version",
 				Aliases:     []string{"v"},
-				Usage:       "version",
-				Description: "Show Bima Cli version and Framework",
+				Description: "version",
+				Usage:       "Show cli and framework version",
 				Action: func(*cli.Context) error {
 					wd, _ := os.Getwd()
 					var path strings.Builder
@@ -438,8 +441,8 @@ func main() {
 			{
 				Name:        "upgrade",
 				Aliases:     []string{"upg"},
-				Usage:       "upgrade",
-				Description: "Upgrade Bima Cli to latest version",
+				Description: "upgrade",
+				Usage:       "Upgrade cli to latest version",
 				Action: func(*cli.Context) error {
 					return tool.Call("upgrade", version)
 				},
@@ -447,8 +450,8 @@ func main() {
 			{
 				Name:        "makesure",
 				Aliases:     []string{"mks"},
-				Usage:       "makesure",
-				Description: "Check and install toolchain",
+				Description: "makesure",
+				Usage:       "Check and install toolchain when it possible",
 				Action: func(ctx *cli.Context) error {
 					return tool.Call("makesure", protocMinVersion, protocGoMinVersion, protocGRpcMinVersion)
 				},

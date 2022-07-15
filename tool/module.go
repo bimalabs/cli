@@ -41,7 +41,7 @@ type (
 
 func (m Module) Create(file string, version string) error {
 	if err := Call("dump"); err != nil {
-		color.New(color.FgRed).Println("Error update DI container")
+		color.New(color.FgRed).Println("Error updating services container")
 
 		return err
 	}
@@ -70,7 +70,7 @@ func (m Module) Create(file string, version string) error {
 	}
 
 	if err = Call("genproto"); err != nil {
-		color.New(color.FgRed).Println("Error generate code from proto files")
+		color.New(color.FgRed).Println("Error generate codes from proto files")
 		_ = m.Remove()
 
 		return err
@@ -84,7 +84,7 @@ func (m Module) Create(file string, version string) error {
 	}
 
 	if err = Call("dump"); err != nil {
-		color.New(color.FgRed).Println("Error update DI container")
+		color.New(color.FgRed).Println("Error updating services container")
 		_ = m.Remove()
 
 		return err
@@ -103,7 +103,7 @@ func (m Module) Create(file string, version string) error {
 func (m Module) Remove() error {
 	remove(string(m))
 	if err := Call("dump"); err != nil {
-		color.New(color.FgRed).Println("Error update DI container")
+		color.New(color.FgRed).Println("Error updating services container")
 
 		return err
 	}
@@ -224,7 +224,7 @@ func create(factory *generator.Factory, util *color.Color, name string) error {
 	field := generator.FieldTemplate{}
 	mapType := utils.NewType()
 
-	util.Println("Welcome to Bima Skeleton Module Generator")
+	util.Println("Welcome to Bima Module Generator")
 	module.Name = name
 
 	index := 2

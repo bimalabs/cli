@@ -219,7 +219,7 @@ func (u util) Upgrade(version string) error {
 
 	if latest == version {
 		progress.Stop()
-		color.New(color.FgGreen).Println("Bima Cli is already up to date")
+		color.New(color.FgGreen).Println("Bima cli is already up to date")
 
 		return nil
 	}
@@ -227,7 +227,7 @@ func (u util) Upgrade(version string) error {
 	progress.Stop()
 
 	progress = spinner.New(spinner.CharSets[spinerIndex], duration)
-	progress.Suffix = " Updating Bima Cli... "
+	progress.Suffix = " Updating Bima cli... "
 	progress.Start()
 
 	cmd := exec.Command("git", "fetch")
@@ -290,7 +290,7 @@ func (u util) Upgrade(version string) error {
 
 	binPath := os.Getenv("GOBIN")
 	if binPath == "" {
-		binPath = os.Getenv("GOPATH")
+		binPath = fmt.Sprintf("%s/bin", os.Getenv("GOPATH"))
 	}
 
 	if binPath == "" {
@@ -301,10 +301,10 @@ func (u util) Upgrade(version string) error {
 			return err
 		}
 
-		binPath = filepath.Dir(string(output))
+		binPath = strings.TrimSuffix(filepath.Dir(string(output)), "/")
 	}
 
-	cmd = exec.Command("mv", "bima", fmt.Sprintf("%s/bin/bima", binPath))
+	cmd = exec.Command("mv", "bima", fmt.Sprintf("%s/bima", binPath))
 	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 	if err != nil {
@@ -315,7 +315,7 @@ func (u util) Upgrade(version string) error {
 	}
 
 	progress.Stop()
-	color.New(color.FgGreen).Print("Bima Cli is upgraded to ")
+	color.New(color.FgGreen).Print("Bima cli is upgraded to ")
 	color.New(color.FgGreen, color.Bold).Println(latest)
 
 	return nil
@@ -355,10 +355,10 @@ func (u util) Genproto() error {
 
 func (u util) toolchain() error {
 	return command(`go install \
-    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
-    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
-    google.golang.org/protobuf/cmd/protoc-gen-go \
-    google.golang.org/grpc/cmd/protoc-gen-go-grpc
+github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
+github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
+google.golang.org/protobuf/cmd/protoc-gen-go \
+google.golang.org/grpc/cmd/protoc-gen-go-grpc
     `).run()
 }
 
