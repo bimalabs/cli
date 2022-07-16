@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -19,7 +20,7 @@ import (
 )
 
 var (
-	version              = "v1.2.15"
+	version              = "v1.2.16"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -342,6 +343,8 @@ func main() {
 						progress.Suffix = " Preparing debug mode... "
 						progress.Start()
 
+						os.Remove(".pid")
+
 						err := tool.Call("build", "bima", true)
 						if err != nil {
 							progress.Stop()
@@ -354,7 +357,36 @@ func main() {
 						cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("./bima run %s true", file)), "")
 						runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
-						return runner.Run(context.TODO(), cmd)
+						go func() {
+							runner.Run(context.TODO(), cmd)
+						}()
+
+						var pid = 0
+						for {
+							if pid != 0 {
+								break
+							}
+
+							content, err := os.ReadFile(".pid")
+							if err != nil {
+								time.Sleep(50 * time.Millisecond)
+
+								continue
+							}
+
+							pid, err = strconv.Atoi(string(content))
+							if err != nil {
+								color.New(color.FgRed).Println("Invalid PID")
+
+								break
+							}
+						}
+
+						if pid == 0 {
+							return errors.New("PID not exists")
+						}
+
+						return tool.Call("debug", pid)
 					}
 
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
@@ -370,29 +402,6 @@ func main() {
 					progress.Stop()
 
 					return tool.Call("run", file)
-				},
-			},
-			{
-				Name:        "debug",
-				Aliases:     []string{"dbg"},
-				Description: "debug",
-				Usage:       "Debug application, your application must running in debug mode",
-				Action: func(ctx *cli.Context) error {
-					content, err := os.ReadFile(".pid")
-					if err != nil {
-						color.New(color.FgRed).Println("Application not running")
-
-						return nil
-					}
-
-					pid, err := strconv.Atoi(string(content))
-					if err != nil {
-						color.New(color.FgRed).Println("Invalid PID")
-
-						return nil
-					}
-
-					return tool.Call("debug", pid)
 				},
 			},
 			{

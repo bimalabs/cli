@@ -52,8 +52,6 @@
 
 - `bima run <mode> [-c <config>]` to run application on `mode` mode using `config` file
 
-- `bima debug` to debug application
-
 - `bima build` to build application
 
 - `bima version` to show framework and cli version
