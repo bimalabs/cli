@@ -116,14 +116,7 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 	}
 
 	protocGoVersion := 0
-	output, err = exec.Command("protoc-gen-go", "--version").CombinedOutput()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println("Protoc Gen Go is not installed")
-
-		return err
-	}
-
+	output, _ = exec.Command("protoc-gen-go", "--version").CombinedOutput()
 	vSlice = strings.Split(string(output), " ")
 	if len(vSlice) > 1 {
 		vSlice[1] = strings.TrimPrefix(vSlice[1], "v")
@@ -138,13 +131,6 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 
 	protocGRpcVersion := 0
 	output, err = exec.Command("protoc-gen-go-grpc", "--version").CombinedOutput()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println("Protoc Gen Go gRPC is not installed")
-
-		return err
-	}
-
 	vSlice = strings.Split(string(output), " ")
 	if len(vSlice) > 1 {
 		vSlice = strings.Split(vSlice[1], ".")
