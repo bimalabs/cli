@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -20,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.2.20"
+	version              = "v1.2.21"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -339,13 +338,18 @@ func main() {
 				Action: func(ctx *cli.Context) error {
 					mode := ctx.Args().First()
 					if mode == "debug" {
+						err := tool.Call("kill")
+						if err != nil {
+							return err
+						}
+
 						progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 						progress.Suffix = " Preparing debug mode... "
 						progress.Start()
 
 						os.Remove(".pid")
 
-						err := tool.Call("build", "bima", true)
+						err = tool.Call("build", "bima", true)
 						if err != nil {
 							progress.Stop()
 
@@ -369,18 +373,11 @@ func main() {
 								break
 							}
 
-							content, err := os.ReadFile(".pid")
-							if err != nil {
+							pid = tool.Pid()
+							if pid == 0 {
 								time.Sleep(50 * time.Millisecond)
 
 								continue
-							}
-
-							pid, err = strconv.Atoi(string(content))
-							if err != nil {
-								color.New(color.FgRed).Println("Invalid PID")
-
-								break
 							}
 						}
 

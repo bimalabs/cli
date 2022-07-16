@@ -31,6 +31,20 @@ type (
 	util    string
 )
 
+func Pid() int {
+	content, err := os.ReadFile(".pid")
+	if err != nil {
+		return 0
+	}
+
+	pid, err := strconv.Atoi(string(content))
+	if err != nil {
+		return 0
+	}
+
+	return pid
+}
+
 func Debug(ctx context.Context, pid int) error {
 	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("dlv attach %d --listen=:16517 --headless --api-version=2 --log", pid)), "")
 	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
@@ -322,6 +336,17 @@ func (u util) Build(name string, debug bool) error {
 
 func (u util) Dump() error {
 	return command("go run dumper/main.go").run()
+}
+
+func (u util) Kill() error {
+	pid := Pid()
+	if pid == 0 {
+		return nil
+	}
+
+	exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
+
+	return nil
 }
 
 func (u util) Clean() error {
