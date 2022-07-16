@@ -99,7 +99,7 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 	output, err := exec.Command("protoc", "--version").CombinedOutput()
 	if err != nil {
 		progress.Stop()
-		color.New(color.FgRed).Println("Protoc is not installed")
+		color.New(color.FgRed).Printf("%s is not installed\n", color.New(color.FgRed, color.Bold).Sprint("protoc"))
 
 		return err
 	}
@@ -170,13 +170,12 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 
 func (u util) Upgrade(version string) error {
 	temp := strings.TrimSuffix(os.TempDir(), "/")
-	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
+	wd := fmt.Sprintf("%s/bima", temp)
 
 	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 	progress.Suffix = " Checking new update... "
 	progress.Start()
 
-	wd := fmt.Sprintf("%s/bima", temp)
 	repository, err := git.PlainClone(wd, false, &git.CloneOptions{
 		URL:   "https://github.com/bimalabs/cli.git",
 		Depth: 1,
@@ -223,12 +222,12 @@ func (u util) Upgrade(version string) error {
 	progress.Suffix = " Updating Bima cli... "
 	progress.Start()
 
-	cmd := exec.Command("git", "fetch")
+	cmd := exec.Command("git", "fetch", "origin", fmt.Sprintf("refs/tags/%s", latest))
 	cmd.Dir = wd
 	err = cmd.Run()
 	if err != nil {
 		progress.Stop()
-		color.New(color.FgRed).Println("Error fetch repository")
+		color.New(color.FgRed).Printf("Error fetch tag %s\n", latest)
 
 		return nil
 	}
@@ -244,10 +243,6 @@ func (u util) Upgrade(version string) error {
 	}
 
 	cmd = exec.Command("go", "get")
-	cmd.Dir = wd
-	_ = cmd.Run()
-
-	cmd = exec.Command("go", "mod", "tidy")
 	cmd.Dir = wd
 	_ = cmd.Run()
 
@@ -310,6 +305,8 @@ func (u util) Upgrade(version string) error {
 	progress.Stop()
 	color.New(color.FgGreen).Print("Bima cli is upgraded to ")
 	color.New(color.FgGreen, color.Bold).Println(latest)
+
+	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
 
 	return nil
 }
