@@ -338,10 +338,7 @@ func main() {
 				Action: func(ctx *cli.Context) error {
 					mode := ctx.Args().First()
 					if mode == "debug" {
-						err := tool.Call("kill")
-						if err != nil {
-							return err
-						}
+						tool.Call("kill")
 
 						progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 						progress.Suffix = " Preparing debug mode... "
@@ -349,7 +346,7 @@ func main() {
 
 						os.Remove(".pid")
 
-						err = tool.Call("build", "bima", true)
+						err := tool.Call("build", "bima", true)
 						if err != nil {
 							progress.Stop()
 
