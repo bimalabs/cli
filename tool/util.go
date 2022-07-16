@@ -171,6 +171,7 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 func (u util) Upgrade(version string) error {
 	temp := strings.TrimSuffix(os.TempDir(), "/")
 	wd := fmt.Sprintf("%s/bima", temp)
+	os.RemoveAll(wd)
 
 	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 	progress.Suffix = " Checking new update... "
@@ -306,7 +307,7 @@ func (u util) Upgrade(version string) error {
 	color.New(color.FgGreen).Print("Bima cli is upgraded to ")
 	color.New(color.FgGreen, color.Bold).Println(latest)
 
-	os.RemoveAll(fmt.Sprintf("%s/bima", temp))
+	os.RemoveAll(wd)
 
 	return nil
 }
