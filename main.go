@@ -354,7 +354,7 @@ func main() {
 
 						progress.Stop()
 
-						cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("./bima run %s true", file)), "")
+						cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("./bima run %s", file)), "")
 						runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
 						ctx, cancel := context.WithCancel(context.Background())
