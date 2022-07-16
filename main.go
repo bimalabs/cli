@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.2.14"
+	version              = "v1.2.15"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -46,8 +46,8 @@ func main() {
 						Aliases:     []string{"app"},
 						Description: "bima create app <name>",
 						Usage:       "Create new application or project",
-						Action: func(cCtx *cli.Context) error {
-							name := cCtx.Args().First()
+						Action: func(ctx *cli.Context) error {
+							name := ctx.Args().First()
 							if name == "" {
 								fmt.Println("Usage: bima create app <name>")
 
@@ -62,8 +62,8 @@ func main() {
 						Aliases:     []string{"mid"},
 						Description: "bima create middleware <name>",
 						Usage:       "Create new middleware",
-						Action: func(cCtx *cli.Context) error {
-							name := cCtx.Args().First()
+						Action: func(ctx *cli.Context) error {
+							name := ctx.Args().First()
 							if name == "" {
 								fmt.Println("Usage: bima create middleware <name>")
 
@@ -78,8 +78,8 @@ func main() {
 						Aliases:     []string{"dvr"},
 						Description: "bima create driver <name>",
 						Usage:       "Create new driver",
-						Action: func(cCtx *cli.Context) error {
-							name := cCtx.Args().First()
+						Action: func(ctx *cli.Context) error {
+							name := ctx.Args().First()
 							if name == "" {
 								fmt.Println("Usage: bima create driver <name>")
 
@@ -94,8 +94,8 @@ func main() {
 						Aliases:     []string{"adp"},
 						Description: "bima create adapter <name>",
 						Usage:       "Create new adapter",
-						Action: func(cCtx *cli.Context) error {
-							name := cCtx.Args().First()
+						Action: func(ctx *cli.Context) error {
+							name := ctx.Args().First()
 							if name == "" {
 								fmt.Println("Usage: bima create adapter <name>")
 
@@ -110,8 +110,8 @@ func main() {
 						Aliases:     []string{"rt"},
 						Description: "bima create route <name>",
 						Usage:       "Create new route",
-						Action: func(cCtx *cli.Context) error {
-							name := cCtx.Args().First()
+						Action: func(ctx *cli.Context) error {
+							name := ctx.Args().First()
 							if name == "" {
 								fmt.Println("Usage: bima create route <name>")
 
@@ -143,8 +143,8 @@ func main() {
 						Aliases:     []string{"new"},
 						Description: "module add <name> [<version> -c <config>]",
 						Usage:       "Create new module <name> with <version> using <config> file",
-						Action: func(cCtx *cli.Context) error {
-							name := cCtx.Args().First()
+						Action: func(ctx *cli.Context) error {
+							name := ctx.Args().First()
 							if name == "" {
 								fmt.Println("Usage: bima module add <name> [<version> -c <config>]")
 
@@ -152,8 +152,8 @@ func main() {
 							}
 
 							version := "v1"
-							if cCtx.NArg() > 1 {
-								version = cCtx.Args().Get(1)
+							if ctx.NArg() > 1 {
+								version = ctx.Args().Get(1)
 							}
 
 							return tool.Module(name).Create(file, version)
@@ -164,8 +164,8 @@ func main() {
 						Aliases:     []string{"rm", "rem"},
 						Description: "module remove <name>",
 						Usage:       "Remove module <name>",
-						Action: func(cCtx *cli.Context) error {
-							name := cCtx.Args().First()
+						Action: func(ctx *cli.Context) error {
+							name := ctx.Args().First()
 							if name == "" {
 								fmt.Println("Usage: bima module remove <name>")
 
@@ -199,8 +199,8 @@ func main() {
 				Aliases:     []string{"install", "compile"},
 				Description: "build <name>",
 				Usage:       "Build application to binary",
-				Action: func(cCtx *cli.Context) error {
-					name := cCtx.Args().First()
+				Action: func(ctx *cli.Context) error {
+					name := ctx.Args().First()
 					if name == "" {
 						fmt.Println("Usage: bima build <name>")
 
@@ -335,8 +335,8 @@ func main() {
 				Aliases:     []string{"rn"},
 				Description: "run <mode> [-c <config>]",
 				Usage:       "Run application using <config> file",
-				Action: func(cCtx *cli.Context) error {
-					mode := cCtx.Args().First()
+				Action: func(ctx *cli.Context) error {
+					mode := ctx.Args().First()
 					if mode == "debug" {
 						progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 						progress.Suffix = " Preparing debug mode... "
@@ -351,7 +351,7 @@ func main() {
 
 						progress.Stop()
 
-						cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("./bima run %s", file)), "")
+						cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("./bima run %s true", file)), "")
 						runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
 						return runner.Run(context.TODO(), cmd)
@@ -377,7 +377,7 @@ func main() {
 				Aliases:     []string{"dbg"},
 				Description: "debug",
 				Usage:       "Debug application, your application must running in debug mode",
-				Action: func(cCtx *cli.Context) error {
+				Action: func(ctx *cli.Context) error {
 					content, err := os.ReadFile(".pid")
 					if err != nil {
 						color.New(color.FgRed).Println("Application not running")
