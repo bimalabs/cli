@@ -31,6 +31,13 @@ type (
 	util    string
 )
 
+func Debug(ctx context.Context, pid int) error {
+	cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("dlv attach %d --listen=:16517 --headless --api-version=2 --log", pid)), "")
+	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
+
+	return runner.Run(ctx, cmd)
+}
+
 func Call(name string, args ...interface{}) error {
 	in := make([]reflect.Value, len(args))
 	for k, v := range args {
@@ -319,10 +326,6 @@ func (u util) Upgrade(version string) error {
 	color.New(color.FgGreen, color.Bold).Println(latest)
 
 	return nil
-}
-
-func (u util) Debug(pid int) error {
-	return command("dlv attach %d --listen=:16517 --headless --api-version=2 --log").run(pid)
 }
 
 func (u util) Build(name string, debug bool) error {

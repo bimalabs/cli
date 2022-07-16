@@ -357,8 +357,10 @@ func main() {
 						cmd, _ := syntax.NewParser().Parse(strings.NewReader(fmt.Sprintf("./bima run %s true", file)), "")
 						runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
+						ctx, cancel := context.WithCancel(context.Background())
+						defer cancel()
 						go func() {
-							runner.Run(context.TODO(), cmd)
+							runner.Run(ctx, cmd)
 						}()
 
 						var pid = 0
@@ -386,7 +388,7 @@ func main() {
 							return errors.New("PID not exists")
 						}
 
-						return tool.Call("debug", pid)
+						return tool.Debug(ctx, pid)
 					}
 
 					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
