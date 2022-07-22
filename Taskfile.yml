@@ -1,5 +1,11 @@
 version: '3'
 tasks:
+    clean:
+        cmds:
+            - go mod tidy
+    update:
+        cmds:
+            - go get -u
     build:
         cmds:
             - docker build -t ad3n/bima-cli:latest .

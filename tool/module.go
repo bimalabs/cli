@@ -13,11 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bimalabs/cli/generated/engine"
-	"github.com/bimalabs/cli/generator"
-	bima "github.com/bimalabs/framework/v4"
 	"github.com/bimalabs/framework/v4/configs"
 	"github.com/bimalabs/framework/v4/utils"
+	"github.com/bimalabs/generators"
 	"github.com/fatih/color"
 	"github.com/gertd/go-pluralize"
 	"github.com/iancoleman/strcase"
@@ -49,19 +47,10 @@ func (m Module) Create(file string, version string) error {
 	env := configs.Env{}
 	config(&env, file, filepath.Ext(file))
 
-	container, err := engine.NewContainer(bima.Generator)
-	if err != nil {
-		color.New(color.FgRed).Println(err.Error())
-
-		return err
-	}
-
-	generator := container.GetBimaModuleGenerator()
-	generator.Driver = env.Db.Driver
-	generator.ApiVersion = version
+	generator := NewGenerator(env.Db.Driver, version)
 
 	termColor := color.New(color.FgGreen, color.Bold)
-	err = create(generator, termColor, string(m))
+	err := create(generator, termColor, string(m))
 	if err != nil {
 		color.New(color.FgRed).Println(err.Error())
 		_ = m.Remove()
@@ -146,7 +135,7 @@ func remove(module string) {
 
 	jsonModules := fmt.Sprintf("%s/swaggers/modules.json", workDir)
 	file, _ := os.ReadFile(jsonModules)
-	modulesJson := []generator.ModuleJson{}
+	modulesJson := []generators.ModuleJson{}
 	registered := modulesJson
 	_ = json.Unmarshal(file, &modulesJson)
 	for _, v := range modulesJson {
@@ -219,9 +208,9 @@ func parseModule(dir string) []string {
 	return mapping.Config
 }
 
-func create(factory *generator.Factory, util *color.Color, name string) error {
-	module := generator.ModuleTemplate{}
-	field := generator.FieldTemplate{}
+func create(factory *generators.Factory, util *color.Color, name string) error {
+	module := generators.ModuleTemplate{}
+	field := generators.FieldTemplate{}
 	mapType := utils.NewType()
 
 	util.Println("Welcome to Bima Module Generator")
@@ -241,7 +230,7 @@ func create(factory *generator.Factory, util *color.Color, name string) error {
 			column(util, &field, mapType)
 
 			field.Name = strings.Replace(field.Name, " ", "", -1)
-			column := generator.FieldTemplate{}
+			column := generators.FieldTemplate{}
 
 			_ = copier.Copy(&column, field)
 
@@ -271,7 +260,7 @@ func create(factory *generator.Factory, util *color.Color, name string) error {
 	return nil
 }
 
-func column(util *color.Color, field *generator.FieldTemplate, mapType utils.Type) {
+func column(util *color.Color, field *generators.FieldTemplate, mapType utils.Type) {
 	err := interact.NewInteraction("Input column name?").Resolve(&field.Name)
 	if err != nil {
 		util.Println(err.Error())

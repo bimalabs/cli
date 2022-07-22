@@ -14,8 +14,10 @@ import (
 	"time"
 
 	"github.com/bimalabs/framework/v4/configs"
+	"github.com/bimalabs/generators"
 	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
+	"github.com/gertd/go-pluralize"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/joho/godotenv"
@@ -420,4 +422,22 @@ func parse(config *configs.Env) {
 	}
 
 	config.CacheLifetime, _ = strconv.Atoi(os.Getenv("CACHE_LIFETIME"))
+}
+
+func NewGenerator(driver string, apiVersion string) *generators.Factory {
+	return &generators.Factory{
+		Driver:     driver,
+		ApiVersion: apiVersion,
+		Pluralizer: pluralize.NewClient(),
+		Template:   &generators.Template{},
+		Generators: []generators.Generator{
+			&generators.Dic{},
+			&generators.Model{},
+			&generators.Module{},
+			&generators.Proto{},
+			&generators.Provider{},
+			&generators.Server{},
+			&generators.Swagger{},
+		},
+	}
 }
