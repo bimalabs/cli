@@ -263,29 +263,9 @@ func (u util) Upgrade(version string) error {
 	cmd.Dir = wd
 	_ = cmd.Run()
 
-	cmd = exec.Command("go", "run", "dumper/main.go")
-	cmd.Dir = wd
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
-
-		return err
-	}
-
-	cmd = exec.Command("go", "get", "-u")
-	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Println(string(output))
-
-		return err
-	}
-
 	cmd = exec.Command("go", "build", "-o", "bima")
 	cmd.Dir = wd
-	output, err = cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
