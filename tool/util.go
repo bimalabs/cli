@@ -102,7 +102,7 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 
 	_, err := exec.LookPath("dlv")
 	if err != nil {
-		output, err := exec.Command("go install github.com/go-delve/delve/cmd/dlv@latest").CombinedOutput()
+		output, err := exec.Command("go" ,"install", "github.com/go-delve/delve/cmd/dlv@latest").CombinedOutput()
 		if err != nil {
 			progress.Stop()
 			color.New(color.FgRed).Println("Error install go debugger: ", output)
