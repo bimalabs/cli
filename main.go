@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.3.5"
+	version              = "v1.3.7"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -372,7 +372,7 @@ func main() {
 
 							pid = tool.Pid()
 							if pid == 0 {
-								time.Sleep(50 * time.Millisecond)
+								time.Sleep(100 * time.Millisecond)
 
 								continue
 							}

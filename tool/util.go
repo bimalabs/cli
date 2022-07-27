@@ -326,10 +326,8 @@ func (u util) Kill() error {
 		return nil
 	}
 
-	err := exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
-	if err == nil {
-		os.Remove(".pid")
-	}
+	exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
+	os.Remove(".pid")
 
 	return nil
 }
