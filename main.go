@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.3.3"
+	version              = "v1.3.4"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -336,15 +336,14 @@ func main() {
 				Description: "run <mode> [-c <config>]",
 				Usage:       "Run application using <config> file",
 				Action: func(ctx *cli.Context) error {
+					tool.Call("kill")
+					os.Remove(".pid")
+
 					mode := ctx.Args().First()
 					if mode == "debug" {
-						tool.Call("kill")
-
 						progress := spinner.New(spinner.CharSets[spinerIndex], duration)
 						progress.Suffix = " Preparing debug mode... "
 						progress.Start()
-
-						os.Remove(".pid")
 
 						err := tool.Call("build", "bima", true)
 						if err != nil {
