@@ -336,8 +336,9 @@ func main() {
 				Description: "run <mode> [-c <config>]",
 				Usage:       "Run application using <config> file",
 				Action: func(ctx *cli.Context) error {
-					tool.Call("kill")
-					os.Remove(".pid")
+					if tool.Pid() != 0 {
+						tool.Call("kill")
+					}
 
 					mode := ctx.Args().First()
 					if mode == "debug" {

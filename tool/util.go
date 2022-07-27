@@ -102,7 +102,7 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 
 	_, err := exec.LookPath("dlv")
 	if err != nil {
-		output, err := exec.Command("go" ,"install", "github.com/go-delve/delve/cmd/dlv@latest").CombinedOutput()
+		output, err := exec.Command("go", "install", "github.com/go-delve/delve/cmd/dlv@latest").CombinedOutput()
 		if err != nil {
 			progress.Stop()
 			color.New(color.FgRed).Println("Error install go debugger: ", output)
@@ -326,7 +326,10 @@ func (u util) Kill() error {
 		return nil
 	}
 
-	exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
+	err := exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
+	if err == nil {
+		os.Remove(".pid")
+	}
 
 	return nil
 }
@@ -340,6 +343,8 @@ func (u util) Update() error {
 }
 
 func (u util) Run(file string) error {
+	defer u.Kill()
+
 	return command("go run -race cmd/main.go run %s").run(file)
 }
 

@@ -99,6 +99,12 @@ github.com/bimalabs/framework/v4 v4.1.9 h1:E22z3YTzyIGPVWLb/FkCg+ZQYC3ccWo4hmwFB
 github.com/bimalabs/framework/v4 v4.1.9/go.mod h1:XbNlDuvDLOTMYv4q/Yib5+Rt1x7cvtFMNiwzP3CAfsM=
 github.com/bimalabs/generators v0.0.5 h1:4MbWyENZ8qMQ9tc6wOaTe8JKgzQeDLxdyN6foDfDWY4=
 github.com/bimalabs/generators v0.0.5/go.mod h1:8Dnd/y79ihK8aZUnMv82gzUUeoXC2LyF8rZr9Bp56Cg=
+github.com/bimalabs/generators v0.0.6 h1:ASJXgGqaQa9d1PdXLKUnHcQjapPwkq8zyCDHzPAsrII=
+github.com/bimalabs/generators v0.0.6/go.mod h1:8Dnd/y79ihK8aZUnMv82gzUUeoXC2LyF8rZr9Bp56Cg=
+github.com/bimalabs/generators v0.0.7 h1:hGpkLC4BehtJ+Lys8HjRqFdfBKrg8kt+mcEr7xIkcKQ=
+github.com/bimalabs/generators v0.0.7/go.mod h1:8Dnd/y79ihK8aZUnMv82gzUUeoXC2LyF8rZr9Bp56Cg=
+github.com/bimalabs/generators v0.0.9 h1:khNQn+56uhGrRmHDQ2ZuZ8B6o/tG8H2XEs8m1X6+Z68=
+github.com/bimalabs/generators v0.0.9/go.mod h1:8Dnd/y79ihK8aZUnMv82gzUUeoXC2LyF8rZr9Bp56Cg=
 github.com/briandowns/spinner v1.18.1 h1:yhQmQtM1zsqFsouh09Bk/jCjd50pC3EOGsh28gLVvwY=
 github.com/briandowns/spinner v1.18.1/go.mod h1:mQak9GHqbspjC/5iUx3qMlIho8xBS/ppAL/hX5SmPJU=
 github.com/cenkalti/backoff/v3 v3.0.0/go.mod h1:cIeZDE3IrqwwJl6VUwCN6trj1oXrTS4rc0ij+ULvLYs=
