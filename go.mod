@@ -3,8 +3,8 @@ module github.com/bimalabs/cli
 go 1.16
 
 require (
-	github.com/bimalabs/framework/v4 v4.1.8
-	github.com/bimalabs/generators v0.0.4
+	github.com/bimalabs/framework/v4 v4.1.9
+	github.com/bimalabs/generators v0.0.5
 	github.com/fatih/color v1.13.0
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/iancoleman/strcase v0.2.0
@@ -28,16 +28,10 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
-	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/urfave/cli/v2 v2.11.1
 	github.com/xanzy/ssh-agent v0.3.1 // indirect
-	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
-	golang.org/x/net v0.0.0-20220726230323-06994584191e // indirect
-	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/sys v0.0.0-20220727055044-e65921a090b8 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.7
-	google.golang.org/genproto v0.0.0-20220725144611-272f38e5d71b // indirect
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 	google.golang.org/protobuf v1.28.0
 	mvdan.cc/sh v2.6.4+incompatible
