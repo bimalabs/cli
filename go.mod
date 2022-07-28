@@ -30,6 +30,7 @@ require (
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/urfave/cli/v2 v2.11.1
 	github.com/xanzy/ssh-agent v0.3.1 // indirect
+	golang.org/x/net v0.0.0-20220728030405-41545e8bf201 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.7
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
