@@ -347,7 +347,12 @@ func (u util) Run(file string) error {
 }
 
 func (u util) Genproto() error {
-	return command("sh proto_gen.sh").run()
+	return command(`protoc -Iprotos -Ilibs --go_out=:protos/builds --go-grpc_out=:protos/builds protos/*.proto
+protoc -Iprotos -Ilibs --grpc-gateway_out=logtostderr=true:protos/builds protos/*.proto
+protoc -Iprotos -Ilibs --go_out=:protos/builds --go-grpc_out=:protos/builds libs/bima/*.proto
+protoc -Iprotos -Ilibs --grpc-gateway_out=logtostderr=true:protos/builds libs/bima/*.proto
+protoc -Iprotos -Ilibs --openapiv2_out=swaggers protos/*.proto
+`).run()
 }
 
 func (u util) toolchain() error {
@@ -356,7 +361,7 @@ github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
 github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
 google.golang.org/protobuf/cmd/protoc-gen-go \
 google.golang.org/grpc/cmd/protoc-gen-go-grpc
-    `).run()
+`).run()
 }
 
 func config(config *configs.Env, filePath string, ext string) {
