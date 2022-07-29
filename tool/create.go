@@ -3,6 +3,7 @@ package tool
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -128,6 +129,11 @@ type (
 )
 
 func (a App) Create() error {
+	wd, _ := os.Getwd()
+	if _, err := os.Stat(fmt.Sprintf("%s/%s", wd, string(a))); !os.IsNotExist(err) {
+		return errors.New("Project already exits")
+	}
+
 	err := createApp(string(a))
 	if err == nil {
 		fmt.Printf("%s application created\n", color.New(color.FgGreen).Sprint(cases.Title(language.English).String(string(a))))
@@ -352,7 +358,7 @@ func (r Route) Create() error {
 
 func createApp(name string) error {
 	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
-	progress.Suffix = " Creating new application... "
+	progress.Suffix = fmt.Sprintf(" Creating %s project... ", color.New(color.FgGreen).Sprint(name))
 	progress.Start()
 
 	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/skeleton.git", name).CombinedOutput()
