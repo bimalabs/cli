@@ -128,13 +128,8 @@ type (
 )
 
 func (a App) Create() error {
-	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
-	progress.Suffix = " Creating new application... "
-	progress.Start()
-
 	err := createApp(string(a))
 	if err == nil {
-		progress.Stop()
 		fmt.Printf("%s application created\n", color.New(color.FgGreen).Sprint(cases.Title(language.English).String(string(a))))
 
 		util := color.New(color.Bold)
@@ -144,8 +139,6 @@ func (a App) Create() error {
 		fmt.Print(" folder and type ")
 		util.Println("bima run")
 	}
-
-	progress.Stop()
 
 	return err
 }
@@ -358,8 +351,13 @@ func (r Route) Create() error {
 }
 
 func createApp(name string) error {
+	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress.Suffix = " Creating new application... "
+	progress.Start()
+
 	output, err := exec.Command("git", "clone", "--depth", "1", "https://github.com/bimalabs/skeleton.git", name).CombinedOutput()
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
@@ -367,6 +365,7 @@ func createApp(name string) error {
 
 	output, err = exec.Command("rm", "-rf", fmt.Sprintf("%s/.git", name)).CombinedOutput()
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
@@ -374,6 +373,7 @@ func createApp(name string) error {
 
 	f, err := os.Create(fmt.Sprintf("%s/.env", name))
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
@@ -384,6 +384,7 @@ func createApp(name string) error {
 
 	_, err = f.WriteString(fmt.Sprintf(env, name, base64.URLEncoding.EncodeToString(hasher.Sum(nil))))
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
@@ -394,7 +395,13 @@ func createApp(name string) error {
 
 	wd, _ := os.Getwd()
 
-	cmd := exec.Command("go", "get")
+	progress.Stop()
+
+	progress = spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress.Suffix = " Download dependencies... "
+	progress.Start()
+
+	cmd := exec.Command("go", "mod", "download")
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
 	_ = cmd.Run()
 
@@ -402,19 +409,27 @@ func createApp(name string) error {
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
 	output, err = cmd.CombinedOutput()
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
 
-	cmd = exec.Command("go", "get", "-u")
+	progress = spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress.Suffix = " Cleaning project... "
+	progress.Start()
+
+	cmd = exec.Command("go", "get")
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
 	output, err = cmd.CombinedOutput()
 	if err != nil {
+		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
 
 		return err
 	}
+
+	progress.Stop()
 
 	return nil
 }
