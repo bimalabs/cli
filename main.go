@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.3.9"
+	version              = "v1.3.11"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200

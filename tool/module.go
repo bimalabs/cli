@@ -235,7 +235,7 @@ func create(factory *generators.Factory, util *color.Color, name string) error {
 			_ = copier.Copy(&column, field)
 
 			column.Index = index
-			column.Name = cases.Title(language.English).String(column.Name)
+			column.Name = cases.Title(language.English, cases.NoLower).String(column.Name)
 			column.NameUnderScore = strcase.ToDelimited(column.Name, '_')
 			module.Fields = append(module.Fields, &column)
 
