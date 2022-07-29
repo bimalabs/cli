@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version              = "v1.3.15"
+	version              = "v1.3.17"
 	protocMinVersion     = 31900
 	protocGoMinVersion   = 12800
 	protocGRpcMinVersion = 10200
@@ -30,7 +30,7 @@ var (
 func main() {
 	file := ""
 	app := &cli.App{
-		Name:                 "Bima cli",
+		Name:                 "bima",
 		Usage:                "Bima Framework Toolkit",
 		Description:          "bima version",
 		EnableBashCompletion: true,
