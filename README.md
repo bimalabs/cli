@@ -20,9 +20,9 @@
 
 - Update dependencies using `go mod tidy`
 
-- Extract and build using `go build -o bima`
+- Extract and build using `go build -o bima-cli`
 
-- Move to your bin folder `mv bima $GOPATH/bin/bima`
+- Move to your bin folder `mv bima-cli $GOPATH/bin/bima`
 
 - Checking toolchain installment `bima makesure`
 

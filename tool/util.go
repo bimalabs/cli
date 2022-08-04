@@ -263,7 +263,7 @@ func (u util) Upgrade(version string) error {
 	cmd.Dir = wd
 	_ = cmd.Run()
 
-	cmd = exec.Command("go", "build", "-o", "bima")
+	cmd = exec.Command("go", "build", "-o", "bima-cli")
 	cmd.Dir = wd
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -289,7 +289,7 @@ func (u util) Upgrade(version string) error {
 		binPath = strings.TrimSuffix(filepath.Dir(string(output)), "/")
 	}
 
-	cmd = exec.Command("mv", "bima", fmt.Sprintf("%s/bima", binPath))
+	cmd = exec.Command("mv", "bima-cli", fmt.Sprintf("%s/bima", binPath))
 	cmd.Dir = wd
 	output, err = cmd.CombinedOutput()
 	if err != nil {

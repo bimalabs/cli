@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bimalabs/cli/bima"
 	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
 	"golang.org/x/text/cases"
@@ -369,10 +370,35 @@ func createApp(name string) error {
 		return err
 	}
 
+	wd, _ := os.Getwd()
+	dir := fmt.Sprintf("%s/%s", wd, name)
+	cmd := exec.Command("git", "fetch", "origin", fmt.Sprintf("refs/tags/%s", bima.Version))
+	cmd.Dir = dir
+	output, err = cmd.CombinedOutput()
+	if err != nil {
+		progress.Stop()
+		color.New(color.FgRed).Println(string(output))
+		os.RemoveAll(dir)
+
+		return err
+	}
+
+	cmd = exec.Command("git", "checkout", bima.Version)
+	cmd.Dir = dir
+	output, err = cmd.CombinedOutput()
+	if err != nil {
+		progress.Stop()
+		color.New(color.FgRed).Println(string(output))
+		os.RemoveAll(dir)
+
+		return err
+	}
+
 	output, err = exec.Command("rm", "-rf", fmt.Sprintf("%s/.git", name)).CombinedOutput()
 	if err != nil {
 		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
+		os.RemoveAll(dir)
 
 		return err
 	}
@@ -381,6 +407,7 @@ func createApp(name string) error {
 	if err != nil {
 		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
+		os.RemoveAll(dir)
 
 		return err
 	}
@@ -392,6 +419,7 @@ func createApp(name string) error {
 	if err != nil {
 		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
+		os.RemoveAll(dir)
 
 		return err
 	}
@@ -399,24 +427,23 @@ func createApp(name string) error {
 	_ = f.Sync()
 	_ = f.Close()
 
-	wd, _ := os.Getwd()
-
 	progress.Stop()
 
 	progress = spinner.New(spinner.CharSets[spinerIndex], duration)
 	progress.Suffix = " Download dependencies... "
 	progress.Start()
 
-	cmd := exec.Command("go", "mod", "download")
+	cmd = exec.Command("go", "mod", "download")
 	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
 	_ = cmd.Run()
 
 	cmd = exec.Command("go", "run", "dumper/main.go")
-	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
+	cmd.Dir = dir
 	output, err = cmd.CombinedOutput()
 	if err != nil {
 		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
+		os.RemoveAll(dir)
 
 		return err
 	}
@@ -426,11 +453,12 @@ func createApp(name string) error {
 	progress.Start()
 
 	cmd = exec.Command("go", "get")
-	cmd.Dir = fmt.Sprintf("%s/%s", wd, name)
+	cmd.Dir = dir
 	output, err = cmd.CombinedOutput()
 	if err != nil {
 		progress.Stop()
 		color.New(color.FgRed).Println(string(output))
+		os.RemoveAll(dir)
 
 		return err
 	}

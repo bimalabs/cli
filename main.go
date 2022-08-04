@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bimalabs/cli/bima"
 	"github.com/bimalabs/cli/tool"
 	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
@@ -16,15 +17,6 @@ import (
 	"golang.org/x/mod/modfile"
 	"mvdan.cc/sh/interp"
 	"mvdan.cc/sh/syntax"
-)
-
-var (
-	version              = "v1.3.17"
-	protocMinVersion     = 31900
-	protocGoMinVersion   = 12800
-	protocGRpcMinVersion = 10200
-	spinerIndex          = 9
-	duration             = 77 * time.Millisecond
 )
 
 func main() {
@@ -183,7 +175,7 @@ func main() {
 				Description: "dump",
 				Usage:       "Dump service container",
 				Action: func(*cli.Context) error {
-					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+					progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 					progress.Suffix = " Dumping service container... "
 					progress.Start()
 					time.Sleep(1 * time.Second)
@@ -207,7 +199,7 @@ func main() {
 						return nil
 					}
 
-					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+					progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 					progress.Suffix = " Bundling application... "
 					progress.Start()
 					if err := tool.Call("clean"); err != nil {
@@ -236,7 +228,7 @@ func main() {
 				Description: "update",
 				Usage:       "Update project dependencies",
 				Action: func(*cli.Context) error {
-					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+					progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 					progress.Suffix = " Updating dependencies... "
 					progress.Start()
 					if err := tool.Call("update"); err != nil {
@@ -264,7 +256,7 @@ func main() {
 				Description: "clean",
 				Usage:       "Cleaning project dependencies",
 				Action: func(*cli.Context) error {
-					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+					progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 					progress.Suffix = " Cleaning dependencies... "
 					progress.Start()
 					if err := tool.Call("clean"); err != nil {
@@ -292,7 +284,7 @@ func main() {
 				Description: "generate",
 				Usage:       "Generate code from protobuf file(s)",
 				Action: func(*cli.Context) error {
-					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+					progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 					progress.Suffix = " Generating codes from protobuff file(s)... "
 					progress.Start()
 					if err := tool.Call("genproto"); err != nil {
@@ -342,7 +334,7 @@ func main() {
 
 					mode := ctx.Args().First()
 					if mode == "debug" {
-						progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+						progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 						progress.Suffix = " Preparing debug mode... "
 						progress.Start()
 
@@ -385,7 +377,7 @@ func main() {
 						return tool.Debug(ctx, pid)
 					}
 
-					progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+					progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 					progress.Suffix = " Preparing run mode... "
 					progress.Start()
 					if err := tool.Call("dump"); err != nil {
@@ -416,7 +408,7 @@ func main() {
 					mod, err := os.ReadFile(path.String())
 					if err != nil {
 						fmt.Printf("Framework: %s\n", framework)
-						fmt.Printf("Cli: %s\n", version)
+						fmt.Printf("Cli: %s\n", bima.Version)
 
 						return nil
 					}
@@ -424,7 +416,7 @@ func main() {
 					f, err := modfile.Parse(path.String(), mod, nil)
 					if err != nil {
 						fmt.Printf("Framework: %s\n", framework)
-						fmt.Printf("Cli: %s\n", version)
+						fmt.Printf("Cli: %s\n", bima.Version)
 
 						return nil
 					}
@@ -438,7 +430,7 @@ func main() {
 					}
 
 					fmt.Printf("Framework: %s\n", framework)
-					fmt.Printf("Cli: %s\n", version)
+					fmt.Printf("Cli: %s\n", bima.Version)
 
 					return nil
 				},
@@ -449,7 +441,7 @@ func main() {
 				Description: "upgrade",
 				Usage:       "Upgrade cli to latest version",
 				Action: func(*cli.Context) error {
-					return tool.Call("upgrade", version)
+					return tool.Call("upgrade", bima.Version)
 				},
 			},
 			{
@@ -458,7 +450,7 @@ func main() {
 				Description: "makesure",
 				Usage:       "Check and install toolchain when it possible",
 				Action: func(ctx *cli.Context) error {
-					return tool.Call("makesure", protocMinVersion, protocGoMinVersion, protocGRpcMinVersion)
+					return tool.Call("makesure", bima.ProtocMinVersion, bima.ProtocGoMinVersion, bima.ProtocGRpcMinVersion)
 				},
 			},
 		},
