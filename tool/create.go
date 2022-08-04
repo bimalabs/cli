@@ -18,9 +18,7 @@ import (
 )
 
 const (
-	spinerIndex = 9
-	duration    = 77 * time.Millisecond
-	env         = `APP_DEBUG=true
+	env = `APP_DEBUG=true
 APP_PORT=7777
 GRPC_PORT=1717
 APP_NAME=%s
@@ -151,7 +149,7 @@ func (a App) Create() error {
 }
 
 func (m Middleware) Create() error {
-	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Creating middleware... "
 	progress.Start()
 	time.Sleep(1 * time.Second)
@@ -202,7 +200,7 @@ func (m Middleware) Create() error {
 }
 
 func (d Driver) Create() error {
-	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Creating database driver... "
 	progress.Start()
 	time.Sleep(1 * time.Second)
@@ -253,7 +251,7 @@ func (d Driver) Create() error {
 }
 
 func (a Adapter) Create() error {
-	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Creating pagination adapter... "
 	progress.Start()
 	time.Sleep(1 * time.Second)
@@ -305,7 +303,7 @@ func (a Adapter) Create() error {
 }
 
 func (r Route) Create() error {
-	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Creating route placeholder... "
 	progress.Start()
 	time.Sleep(1 * time.Second)
@@ -358,7 +356,7 @@ func (r Route) Create() error {
 }
 
 func createApp(name string) error {
-	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = fmt.Sprintf(" Creating %s project... ", color.New(color.FgGreen).Sprint(name))
 	progress.Start()
 
@@ -372,7 +370,7 @@ func createApp(name string) error {
 
 	wd, _ := os.Getwd()
 	dir := fmt.Sprintf("%s/%s", wd, name)
-	cmd := exec.Command("git", "fetch", "origin", fmt.Sprintf("refs/tags/%s", bima.Version))
+	cmd := exec.Command("git", "fetch", "origin", fmt.Sprintf("refs/tags/%s", bima.SkeletonVersion))
 	cmd.Dir = dir
 	output, err = cmd.CombinedOutput()
 	if err != nil {
@@ -383,7 +381,7 @@ func createApp(name string) error {
 		return err
 	}
 
-	cmd = exec.Command("git", "checkout", bima.Version)
+	cmd = exec.Command("git", "checkout", bima.SkeletonVersion)
 	cmd.Dir = dir
 	output, err = cmd.CombinedOutput()
 	if err != nil {
@@ -429,7 +427,7 @@ func createApp(name string) error {
 
 	progress.Stop()
 
-	progress = spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress = spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Download dependencies... "
 	progress.Start()
 
@@ -448,7 +446,7 @@ func createApp(name string) error {
 		return err
 	}
 
-	progress = spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress = spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Cleaning project... "
 	progress.Start()
 

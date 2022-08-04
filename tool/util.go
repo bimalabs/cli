@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bimalabs/cli/bima"
 	"github.com/bimalabs/framework/v4/configs"
 	"github.com/bimalabs/generators"
 	"github.com/briandowns/spinner"
@@ -89,7 +90,7 @@ func (c command) run(args ...interface{}) error {
 }
 
 func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
-	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Checking toolchain installment... "
 	progress.Start()
 
@@ -167,7 +168,7 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 
 	progress.Stop()
 
-	progress = spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress = spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Try to install/update to latest toolchain... "
 	progress.Start()
 	err = u.toolchain()
@@ -189,7 +190,7 @@ func (u util) Upgrade(version string) error {
 	wd := fmt.Sprintf("%s/bima", temp)
 	os.RemoveAll(wd)
 
-	progress := spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress := spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Checking new update... "
 	progress.Start()
 
@@ -235,7 +236,7 @@ func (u util) Upgrade(version string) error {
 
 	progress.Stop()
 
-	progress = spinner.New(spinner.CharSets[spinerIndex], duration)
+	progress = spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
 	progress.Suffix = " Updating Bima cli... "
 	progress.Start()
 
