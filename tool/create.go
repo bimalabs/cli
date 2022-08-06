@@ -23,6 +23,7 @@ APP_PORT=7777
 GRPC_PORT=1717
 APP_NAME=%s
 APP_SECRET=%s
+API_PREFIX=/api/v1
 `
 
 	adapter = `package adapters
@@ -370,7 +371,8 @@ func createApp(name string) error {
 
 	wd, _ := os.Getwd()
 	dir := fmt.Sprintf("%s/%s", wd, name)
-	cmd := exec.Command("git", "fetch", "origin", fmt.Sprintf("refs/tags/%s", bima.SkeletonVersion))
+
+	cmd := exec.Command("git", "fetch", "--tags")
 	cmd.Dir = dir
 	output, err = cmd.CombinedOutput()
 	if err != nil {

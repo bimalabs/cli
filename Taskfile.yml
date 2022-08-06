@@ -16,7 +16,7 @@ tasks:
             - mv bima-cli $GOPATH/bin/bima
     commit:
         cmds:
-            - git commit -am "{{.CLI_ARGS}}"
+            - git commit -a
             - git push
     release:
         cmds:

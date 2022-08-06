@@ -133,22 +133,17 @@ func main() {
 							},
 						},
 						Aliases:     []string{"new"},
-						Description: "module add <name> [<version> -c <config>]",
-						Usage:       "Create new module <name> with <version> using <config> file",
+						Description: "module add <name> [-c <config>]",
+						Usage:       "Create new module <name> using <config> file",
 						Action: func(ctx *cli.Context) error {
 							name := ctx.Args().First()
 							if name == "" {
-								fmt.Println("Usage: bima module add <name> [<version> -c <config>]")
+								fmt.Println("Usage: bima module add <name> [-c <config>]")
 
 								return nil
 							}
 
-							version := "v1"
-							if ctx.NArg() > 1 {
-								version = ctx.Args().Get(1)
-							}
-
-							return tool.Module(name).Create(file, version)
+							return tool.Module(name).Create(file)
 						},
 					},
 					{

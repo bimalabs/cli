@@ -16,6 +16,8 @@
 
 ## Install
 
+- Checking `$GOPATH` in your environment variable using `echo $GOPATH`
+
 - Download latest release from `https://github.com/bimalabs/cli/tags`
 
 - Update dependencies using `go mod tidy`
