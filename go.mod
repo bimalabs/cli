@@ -2,11 +2,9 @@ module github.com/bimalabs/cli
 
 go 1.16
 
-replace github.com/bimalabs/framework/v4 v4.2.1 => ../framework
-
 require (
-	github.com/bimalabs/framework/v4 v4.2.1
-	github.com/bimalabs/generators v0.0.9
+	github.com/bimalabs/framework/v4 v4.2.9
+	github.com/bimalabs/generators v0.0.13
 	github.com/fatih/color v1.13.0
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/iancoleman/strcase v0.2.0

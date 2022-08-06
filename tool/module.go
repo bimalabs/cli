@@ -237,7 +237,7 @@ func create(factory *generators.Factory, util *color.Color, name string) error {
 			column.Index = index
 			column.Name = cases.Title(language.English, cases.NoLower).String(column.Name)
 			column.NameUnderScore = strcase.ToDelimited(column.Name, '_')
-			module.Fields = append(module.Fields, &column)
+			module.Fields = append(module.Fields, column)
 
 			field.Name = ""
 			field.ProtobufType = ""

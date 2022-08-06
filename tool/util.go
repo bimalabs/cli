@@ -240,17 +240,7 @@ func (u util) Upgrade(version string) error {
 	progress.Suffix = " Updating Bima cli... "
 	progress.Start()
 
-	cmd := exec.Command("git", "fetch", "origin", fmt.Sprintf("refs/tags/%s", latest))
-	cmd.Dir = wd
-	err = cmd.Run()
-	if err != nil {
-		progress.Stop()
-		color.New(color.FgRed).Printf("Error fetch tag %s\n", latest)
-
-		return nil
-	}
-
-	cmd = exec.Command("git", "checkout", latest)
+	cmd := exec.Command("git", "checkout", latest)
 	cmd.Dir = wd
 	err = cmd.Run()
 	if err != nil {
@@ -394,13 +384,14 @@ func config(config *configs.Env, filePath string, ext string) {
 }
 
 func parse(config *configs.Env) {
-	config.Secret = os.Getenv("APP_SECRET")
 	config.Debug, _ = strconv.ParseBool(os.Getenv("APP_DEBUG"))
 	config.HttpPort, _ = strconv.Atoi(os.Getenv("APP_PORT"))
 	config.RpcPort, _ = strconv.Atoi(os.Getenv("GRPC_PORT"))
-	config.Service = os.Getenv("APP_NAME")
-
 	dbPort, _ := strconv.Atoi(os.Getenv("DB_PORT"))
+
+	config.ApiPrefix = os.Getenv("API_PREFIX")
+	config.Secret = os.Getenv("APP_SECRET")
+	config.Service = os.Getenv("APP_NAME")
 	config.Db = configs.Db{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     dbPort,
@@ -413,12 +404,12 @@ func parse(config *configs.Env) {
 	config.CacheLifetime, _ = strconv.Atoi(os.Getenv("CACHE_LIFETIME"))
 }
 
-func NewGenerator(driver string, apiVersion string) *generators.Factory {
+func NewGenerator(driver string, apiPrefix string) *generators.Factory {
 	return &generators.Factory{
 		Driver:     driver,
-		ApiVersion: apiVersion,
-		Pluralizer: pluralize.NewClient(),
-		Template:   &generators.Template{},
+		ApiPrefix:  apiPrefix,
+		Pluralizer: *pluralize.NewClient(),
+		Template:   generators.Template{},
 		Generators: []generators.Generator{
 			&generators.Dic{},
 			&generators.Model{},
