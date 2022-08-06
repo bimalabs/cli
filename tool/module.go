@@ -37,7 +37,7 @@ type (
 	Module string
 )
 
-func (m Module) Create(file string, version string) error {
+func (m Module) Create(file string) error {
 	if err := Call("dump"); err != nil {
 		color.New(color.FgRed).Println("Error updating services container")
 
@@ -47,7 +47,7 @@ func (m Module) Create(file string, version string) error {
 	env := configs.Env{}
 	config(&env, file, filepath.Ext(file))
 
-	generator := NewGenerator(env.Db.Driver, version)
+	generator := NewGenerator(env.Db.Driver, env.ApiPrefix)
 
 	termColor := color.New(color.FgGreen, color.Bold)
 	err := create(generator, termColor, string(m))

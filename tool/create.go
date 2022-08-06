@@ -23,6 +23,7 @@ APP_PORT=7777
 GRPC_PORT=1717
 APP_NAME=%s
 APP_SECRET=%s
+API_PREFIX=/api/v1
 `
 
 	adapter = `package adapters
