@@ -23,7 +23,7 @@ require (
 	github.com/creack/pty v1.1.17 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/go-git/go-git/v5 v5.4.2
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.1
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.2
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
