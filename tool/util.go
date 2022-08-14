@@ -291,7 +291,7 @@ func (u util) Upgrade(version string) error {
 	}
 
 	progress.Stop()
-	color.New(color.FgGreen).Print("Bima cli is upgraded to ")
+	color.New(color.FgGreen).Print("Bima cli has been upgraded to ")
 	color.New(color.FgGreen, color.Bold).Println(latest)
 
 	os.RemoveAll(wd)

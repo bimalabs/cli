@@ -134,7 +134,7 @@ func main() {
 						},
 						Aliases:     []string{"new"},
 						Description: "module add <name> [-c <config>]",
-						Usage:       "Create new module <name> using <config> file",
+						Usage:       "Create new module <name> use <config> file",
 						Action: func(ctx *cli.Context) error {
 							name := ctx.Args().First()
 							if name == "" {
@@ -228,7 +228,7 @@ func main() {
 					progress.Start()
 					if err := tool.Call("update"); err != nil {
 						progress.Stop()
-						color.New(color.FgRed).Println("Error update dependencies")
+						color.New(color.FgRed).Println("Error updating dependencies")
 
 						return err
 					}

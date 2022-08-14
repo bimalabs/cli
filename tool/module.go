@@ -213,7 +213,7 @@ func create(factory *generators.Factory, util *color.Color, name string) error {
 	field := generators.FieldTemplate{}
 	mapType := utils.NewType()
 
-	util.Println("Welcome to Bima Module Generator")
+	util.Println("Welcome to Bima Framework Generator")
 	module.Name = name
 
 	index := 2

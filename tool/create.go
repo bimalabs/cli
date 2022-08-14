@@ -136,7 +136,7 @@ func (a App) Create() error {
 
 	err := createApp(string(a))
 	if err == nil {
-		fmt.Printf("%s application created\n", color.New(color.FgGreen).Sprint(cases.Title(language.English).String(string(a))))
+		fmt.Printf("Project %s has been created\n", color.New(color.FgGreen).Sprint(cases.Title(language.English).String(string(a))))
 
 		util := color.New(color.Bold)
 
@@ -195,7 +195,7 @@ func (m Middleware) Create() error {
 	}
 
 	progress.Stop()
-	fmt.Printf("Middleware %s created\n", color.New(color.FgGreen).Sprint(name))
+	fmt.Printf("Middleware %s has been created\n", color.New(color.FgGreen).Sprint(name))
 
 	return nil
 }
@@ -246,7 +246,7 @@ func (d Driver) Create() error {
 	}
 
 	progress.Stop()
-	fmt.Printf("Driver %s created\n", color.New(color.FgGreen).Sprint(name))
+	fmt.Printf("Driver %s has been created\n", color.New(color.FgGreen).Sprint(name))
 
 	return nil
 }
@@ -298,7 +298,7 @@ func (a Adapter) Create() error {
 	}
 
 	progress.Stop()
-	fmt.Printf("Adapter %s created\n", color.New(color.FgGreen).Sprint(name))
+	fmt.Printf("Adapter %s has been created\n", color.New(color.FgGreen).Sprint(name))
 
 	return nil
 }
@@ -351,7 +351,7 @@ func (r Route) Create() error {
 	}
 
 	progress.Stop()
-	fmt.Printf("Route %s created\n", color.New(color.FgGreen).Sprint(name))
+	fmt.Printf("Route %s has been created\n", color.New(color.FgGreen).Sprint(name))
 
 	return nil
 }
@@ -430,7 +430,7 @@ func createApp(name string) error {
 	progress.Stop()
 
 	progress = spinner.New(spinner.CharSets[bima.SpinerIndex], bima.Duration)
-	progress.Suffix = " Download dependencies... "
+	progress.Suffix = " Downloading dependencies... "
 	progress.Start()
 
 	cmd = exec.Command("go", "mod", "download")
