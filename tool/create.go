@@ -131,7 +131,7 @@ type (
 func (a App) Create() error {
 	wd, _ := os.Getwd()
 	if _, err := os.Stat(fmt.Sprintf("%s/%s", wd, string(a))); !os.IsNotExist(err) {
-		return errors.New("Project already exits")
+		return errors.New("project already exits")
 	}
 
 	err := createApp(string(a))

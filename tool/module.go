@@ -247,7 +247,7 @@ func create(factory *generators.Factory, util *color.Color, name string) error {
 	}
 
 	if len(module.Fields) < 1 {
-		return errors.New("You must have at least one column in table")
+		return errors.New("you must have at least one column in table")
 	}
 
 	factory.Generate(module)

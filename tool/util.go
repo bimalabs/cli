@@ -147,7 +147,7 @@ func (u util) Makesure(protoc int, protocGo int, protocGRpc int) error {
 	}
 
 	protocGRpcVersion := 0
-	output, err = exec.Command("protoc-gen-go-grpc", "--version").CombinedOutput()
+	output, _ = exec.Command("protoc-gen-go-grpc", "--version").CombinedOutput()
 	vSlice = strings.Split(string(output), " ")
 	if len(vSlice) > 1 {
 		vSlice = strings.Split(vSlice[1], ".")
