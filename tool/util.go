@@ -317,8 +317,8 @@ func (u util) Kill() error {
 		return nil
 	}
 
-	exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
-	os.Remove(".pid")
+	_ = exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
+	_ = os.Remove(".pid")
 
 	return nil
 }
@@ -332,7 +332,9 @@ func (u util) Update() error {
 }
 
 func (u util) Run(file string) error {
-	defer u.Kill()
+	defer func() {
+		_ = u.Kill()
+	}()
 
 	return command("go run -race cmd/main.go run %s").run(file)
 }

@@ -3,9 +3,11 @@ tasks:
     clean:
         cmds:
             - go mod tidy
+            - golangci-lint
     update:
         cmds:
             - go get -u
+            - golangci-lint
     build:
         cmds:
             - docker build -t ad3n/bima-cli:latest .

@@ -324,7 +324,7 @@ func main() {
 				Usage:       "Run application using <config> file",
 				Action: func(ctx *cli.Context) error {
 					if tool.Pid() != 0 {
-						tool.Call("kill")
+						_ = tool.Call("kill")
 					}
 
 					mode := ctx.Args().First()
@@ -348,7 +348,7 @@ func main() {
 						ctx, cancel := context.WithCancel(context.Background())
 						defer cancel()
 						go func() {
-							runner.Run(ctx, cmd)
+							_ = runner.Run(ctx, cmd)
 						}()
 
 						var pid = 0
