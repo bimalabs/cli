@@ -1,24 +1,24 @@
 version: '3'
 tasks:
-    clean:
-        cmds:
-            - go mod tidy
-    update:
-        cmds:
-            - go get -u
-    build:
-        cmds:
-            - docker build -t ad3n/bima-cli:latest .
-            - docker push ad3n/bima-cli:latest
-    install:
-        cmds:
-            - go build -o bima-cli
-            - mv bima-cli $GOPATH/bin/bima
-    commit:
-        cmds:
-            - git commit -a
-            - git push
-    release:
-        cmds:
-            - git tag -a {{.CLI_ARGS}} -m "release {{.CLI_ARGS}}"
-            - git push origin {{.CLI_ARGS}}
+  clean:
+    cmds:
+      - go mod tidy
+  update:
+    cmds:
+      - go get -u
+  build:
+    cmds:
+      - docker build -t ad3n/bima-cli:latest .
+      - docker push ad3n/bima-cli:latest
+  install:
+    cmds:
+      - go build -o bima-cli
+      - mv bima-cli $GOPATH/bin/bima
+  commit:
+    cmds:
+      - git commit -a
+      - git push
+  release:
+    cmds:
+      - git tag -a {{.CLI_ARGS}} -m "release {{.CLI_ARGS}}"
+      - git push origin {{.CLI_ARGS}}

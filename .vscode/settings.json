@@ -1,9 +1,5 @@
 {
     "go.buildFlags": [
         "-tags=tools"
-    ],
-    "go.lintTool":"golangci-lint",
-    "go.lintFlags": [
-        "--fast"
     ]
 }
