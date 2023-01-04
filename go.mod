@@ -3,8 +3,8 @@ module github.com/bimalabs/cli
 go 1.16
 
 require (
-	github.com/bimalabs/framework/v4 v4.3.0
-	github.com/bimalabs/generators v0.0.15
+	github.com/bimalabs/framework/v4 v4.3.3
+	github.com/bimalabs/generators v1.4.25
 	github.com/fatih/color v1.13.0
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/iancoleman/strcase v0.2.0

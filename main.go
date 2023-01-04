@@ -426,6 +426,7 @@ func main() {
 
 					fmt.Printf("Framework: %s\n", framework)
 					fmt.Printf("Cli: %s\n", bima.Version)
+					fmt.Printf("SKeleton: %s\n", bima.SkeletonVersion)
 
 					return nil
 				},

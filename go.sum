@@ -418,8 +418,16 @@ github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+Ce
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
 github.com/bimalabs/framework/v4 v4.3.0 h1:boAa2qV/E4ycsFIjLX6Csy9lqLuyW4OSujHDrojzbX8=
 github.com/bimalabs/framework/v4 v4.3.0/go.mod h1:qIHbdb/lTGU6BygE2XFgZWFc6CHjt3cxGN38q5mXWhA=
+github.com/bimalabs/framework/v4 v4.3.1 h1:4d5kSKnWCWYKClpdL3fsX704HyzPyjI0/EzsVf+njZE=
+github.com/bimalabs/framework/v4 v4.3.1/go.mod h1:qIHbdb/lTGU6BygE2XFgZWFc6CHjt3cxGN38q5mXWhA=
+github.com/bimalabs/framework/v4 v4.3.3 h1:Lsof7O3XUhI95lQNddZ9Nn8rDuSFrdP3RYHvVRhynDI=
+github.com/bimalabs/framework/v4 v4.3.3/go.mod h1:qIHbdb/lTGU6BygE2XFgZWFc6CHjt3cxGN38q5mXWhA=
 github.com/bimalabs/generators v0.0.15 h1:aqY3H6zzS0A6hKUFthZg7bkhYdIEDn/E+KDVIpex4bs=
 github.com/bimalabs/generators v0.0.15/go.mod h1:kHVLTw+4hA4Ge9xwd7VOjQ6la38/suykPk/svJhCqWA=
+github.com/bimalabs/generators v1.4.23 h1:IhQvVsG9124vR06IzUUUZeG51BHxBlYWuh815BDuiuY=
+github.com/bimalabs/generators v1.4.23/go.mod h1:kHVLTw+4hA4Ge9xwd7VOjQ6la38/suykPk/svJhCqWA=
+github.com/bimalabs/generators v1.4.25 h1:h2HffuzCvpDEoV4+ublMFWARm3g+nUzab9lP9OvH17Y=
+github.com/bimalabs/generators v1.4.25/go.mod h1:kHVLTw+4hA4Ge9xwd7VOjQ6la38/suykPk/svJhCqWA=
 github.com/briandowns/spinner v1.20.0 h1:GQq1Yf1KyzYT8CY19GzWrDKP6hYOFB6J72Ks7d8aO1U=
 github.com/briandowns/spinner v1.20.0/go.mod h1:TcwZHb7Wb6vn/+bcVv1UXEzaA4pLS7yznHlkY/HzH44=
 github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
