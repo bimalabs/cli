@@ -1,6 +1,6 @@
 FROM golang:alpine as builder
 
-RUN apk update && apk add --no-cache git
+RUN apk update && apk add --no-cache git gcc
 RUN mkdir -p /go/src/cli
 WORKDIR /go/src/cli
 COPY go.mod .

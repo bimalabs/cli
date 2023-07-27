@@ -64,4 +64,4 @@
 
 ## Enable autocomplete terminal
 
-To enable autocomplete feature, refer to [Urfave Cli](https://cli.urfave.org/v2/#enabling)
+To enable autocomplete feature, refer to [Urfave Cli](https://cli.urfave.org/v2/examples/bash-completions)
