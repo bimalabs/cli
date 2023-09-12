@@ -77,12 +77,7 @@ func Call(name string, args ...interface{}) error {
 }
 
 func (c command) run(args ...interface{}) error {
-	var f string
-	if len(args) == 0 {
-		f = fmt.Sprint(string(c))
-	} else {
-		f = fmt.Sprintf(string(c), args...)
-	}
+	f := fmt.Sprintf(string(c), args...)
 	cmd, _ := syntax.NewParser().Parse(strings.NewReader(f), "")
 	runner, _ := interp.New(interp.Env(nil), interp.StdIO(nil, os.Stdout, os.Stdout))
 
