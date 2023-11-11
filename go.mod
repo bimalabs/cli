@@ -5,7 +5,7 @@ go 1.21
 toolchain go1.21.3
 
 require (
-	github.com/bimalabs/framework/v4 v4.3.3
+	github.com/bimalabs/framework/v4 v4.3.5
 	github.com/bimalabs/generators v1.4.25
 	github.com/fatih/color v1.16.0
 	github.com/gertd/go-pluralize v0.2.1

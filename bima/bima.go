@@ -3,8 +3,8 @@ package bima
 import "time"
 
 var (
-	Version              = "v1.5.1"
-	SkeletonVersion      = "v1.4.27"
+	Version              = "v1.5.3"
+	SkeletonVersion      = "v1.4.29"
 	ProtocMinVersion     = 31900
 	ProtocGoMinVersion   = 12800
 	ProtocGRpcMinVersion = 10200
