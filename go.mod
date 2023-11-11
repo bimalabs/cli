@@ -79,7 +79,6 @@ require (
 	github.com/go-git/go-git/v5 v5.10.0
 	github.com/go-playground/validator/v10 v10.16.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/golang/glog v1.1.2 // indirect
 	github.com/google/uuid v1.4.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1
 	github.com/klauspost/compress v1.17.2 // indirect
