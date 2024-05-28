@@ -20,7 +20,6 @@ require (
 require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
-	github.com/acomagu/bufpipe v1.0.4 // indirect
 	github.com/allegro/bigcache/v3 v3.1.0 // indirect
 	github.com/cloudflare/circl v1.3.8 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
@@ -32,7 +31,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
@@ -89,8 +87,6 @@ require (
 	github.com/urfave/cli/v2 v2.27.2
 	go.mongodb.org/mongo-driver v1.15.0 // indirect
 	golang.org/x/text v0.15.0
-	golang.org/x/tools v0.21.0 // indirect
-	google.golang.org/genproto v0.0.0-20240521202816-d264139d666e // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240521202816-d264139d666e // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240521202816-d264139d666e // indirect
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.3.0
