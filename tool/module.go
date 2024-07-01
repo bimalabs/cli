@@ -136,7 +136,7 @@ func remove(module string) {
 	jsonModules := fmt.Sprintf("%s/swaggers/modules.json", workDir)
 	file, _ := os.ReadFile(jsonModules)
 	modulesJson := []generators.ModuleJson{}
-	registered := modulesJson
+	registered := []generators.ModuleJson{}
 	_ = json.Unmarshal(file, &modulesJson)
 	for _, v := range modulesJson {
 		if v.Name != moduleName {
