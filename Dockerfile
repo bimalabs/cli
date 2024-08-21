@@ -1,6 +1,6 @@
-FROM golang:alpine as builder
+FROM ubuntu:latest as builder
 
-RUN apk update && apk add --no-cache git gcc libc-dev
+RUN apt update && apt install -y git golang gcc libc-dev
 RUN mkdir -p /go/src/cli
 WORKDIR /go/src/cli
 COPY go.mod .
@@ -10,7 +10,10 @@ COPY . .
 RUN go build -o bima .
 RUN mv /go/src/cli/bima /usr/local/bin/bima
 RUN chmod a+x /usr/local/bin/bima
+RUN bima version
 
-FROM golang:alpine
+FROM ubuntu:latest
 
 COPY --from=builder /usr/local/bin/bima /usr/local/bin/bima
+RUN chmod a+x /usr/local/bin/bima
+RUN bima version
